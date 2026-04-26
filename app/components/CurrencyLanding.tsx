@@ -1,7 +1,8 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 /** Currencies + invoice-field tokens */
 const INVOICE_PARTICLES = [
@@ -41,7 +42,7 @@ type Particle = {
   left: string;
   top: string;
   fontSize: string;
-  delay: string;
+  animationDelay: string;
   burstMs: number;
   driftMs: number;
   rot: string;
@@ -52,30 +53,36 @@ type Particle = {
   compact: boolean;
 };
 
-function hashSeed(i: number): number {
-  const x = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
-  return x - Math.floor(x);
+/** [0, 1) — 32-bit mix only; identical on server and client (unlike Math.sin). */
+function unit01(i: number, salt: number): number {
+  let h = Math.imul(i ^ salt, 0x9e3779b1);
+  h ^= h >>> 16;
+  h = Math.imul(h, 0x85ebca6b);
+  h ^= h >>> 13;
+  return (h >>> 0) / 4294967296;
 }
 
 function buildParticles(count: number): Particle[] {
   return Array.from({ length: count }, (_, i) => {
-    const r = hashSeed(i);
-    const r2 = hashSeed(i + 1000);
-    const r3 = hashSeed(i + 2000);
+    const r = unit01(i, 0x51ed);
+    const r2 = unit01(i, 0xa11ce);
+    const r3 = unit01(i, 0xbeef);
     const label = INVOICE_PARTICLES[i % INVOICE_PARTICLES.length];
     const compact = label.length > 1;
     const baseSize = compact ? 0.55 + r3 * 0.55 : 1 + r3 * 1.85;
+    const burstMs = 880 + Math.floor(r * 420);
+    const delayMs = i * 26; // was i * 0.026s
     return {
       label,
-      left: `${5 + r * 90}%`,
-      top: `${5 + r2 * 88}%`,
-      fontSize: `${baseSize}rem`,
-      delay: `${(i * 0.026).toFixed(3)}s`,
-      burstMs: 880 + Math.floor(r * 420),
+      left: `${(5 + r * 90).toFixed(4)}%`,
+      top: `${(5 + r2 * 88).toFixed(4)}%`,
+      fontSize: `${baseSize.toFixed(4)}rem`,
+      animationDelay: `${delayMs}ms, ${delayMs + burstMs}ms`,
+      burstMs,
       driftMs: 4800 + Math.floor(r2 * 2200),
       rot: `${-22 + Math.floor(r3 * 44)}deg`,
-      peak: `${0.3 + r * 0.32}`,
-      rest: `${0.1 + r2 * 0.16}`,
+      peak: (0.3 + r * 0.32).toFixed(4),
+      rest: (0.1 + r2 * 0.16).toFixed(4),
       dx: `${5 + Math.floor(r * 16)}px`,
       dy: `${-8 - Math.floor(r2 * 18)}px`,
       compact,
@@ -83,21 +90,35 @@ function buildParticles(count: number): Particle[] {
   });
 }
 
+const SPLASH_PARTICLES = buildParticles(46);
+
 const SPLASH_MS = 3200;
 
-export function CurrencyLanding({ children }: { children: React.ReactNode }) {
+type CurrencyLandingProps = {
+  children: React.ReactNode;
+  /** When set, navigates here after the splash finishes (e.g. `/login`). */
+  redirectTo?: string;
+};
+
+export function CurrencyLanding({
+  children,
+  redirectTo,
+}: CurrencyLandingProps) {
+  const router = useRouter();
   const [showSplash, setShowSplash] = useState(true);
   const [exiting, setExiting] = useState(false);
-  const particles = useMemo(() => buildParticles(46), []);
 
   useEffect(() => {
     const t = window.setTimeout(() => setExiting(true), SPLASH_MS - 700);
-    const t2 = window.setTimeout(() => setShowSplash(false), SPLASH_MS);
+    const t2 = window.setTimeout(() => {
+      setShowSplash(false);
+      if (redirectTo) router.replace(redirectTo);
+    }, SPLASH_MS);
     return () => {
       window.clearTimeout(t);
       window.clearTimeout(t2);
     };
-  }, []);
+  }, [redirectTo, router]);
 
   return (
     <>
@@ -124,7 +145,7 @@ export function CurrencyLanding({ children }: { children: React.ReactNode }) {
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-transparent to-zinc-950/90" />
 
           <div className="relative h-full w-full">
-            {particles.map((p, i) => {
+            {SPLASH_PARTICLES.map((p, i) => {
               const style: CSSProperties & Record<string, string> = {
                 left: p.left,
                 top: p.top,
@@ -133,7 +154,7 @@ export function CurrencyLanding({ children }: { children: React.ReactNode }) {
                 animationDuration: `${p.burstMs}ms, ${p.driftMs}ms`,
                 animationTimingFunction:
                   "cubic-bezier(0.34, 1.56, 0.64, 1), ease-in-out",
-                animationDelay: `${p.delay}, calc(${p.delay} + ${p.burstMs}ms)`,
+                animationDelay: p.animationDelay,
                 animationIterationCount: "1, infinite",
                 animationFillMode: "forwards, none",
                 "--rot": p.rot,
@@ -154,13 +175,15 @@ export function CurrencyLanding({ children }: { children: React.ReactNode }) {
             })}
           </div>
 
-          <div className="pointer-events-none absolute bottom-[18%] left-1/2 w-[min(92vw,30rem)] -translate-x-1/2 text-center">
-            <p className="text-sm font-medium tracking-[0.28em] text-teal-300/90 uppercase">
-              Invoice management
-            </p>
-            <p className="mt-2 font-sans text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-              Create, send, and track invoices—without the spreadsheet chaos
-            </p>
+          <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-6">
+            <div className="w-full max-w-[min(92vw,30rem)] text-center">
+              <p className="text-sm font-medium tracking-[0.28em] text-teal-300/90 uppercase">
+                Invoice management
+              </p>
+              <p className="mt-2 font-sans text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+                Create, send, and track invoices—without the spreadsheet chaos
+              </p>
+            </div>
           </div>
         </div>
       )}
