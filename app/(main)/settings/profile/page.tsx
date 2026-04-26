@@ -18,7 +18,7 @@ export default async function ProfilePage() {
   };
 
   return (
-    <div className="min-h-full bg-black px-5 pb-28 pt-8 text-white">
+    <div className="min-h-full pb-28 pt-6 font-sans text-foreground">
       <ProfileForm initial={initial} />
     </div>
   );

@@ -16,12 +16,6 @@ const items = [
     Icon: InvoiceIcon,
     isActive: (p: string) => p === "/invoice" || p.startsWith("/invoice/"),
   },
-  {
-    href: "/settings/profile",
-    label: "Profile",
-    Icon: ProfileIcon,
-    isActive: (p: string) => p.startsWith("/settings"),
-  },
 ] as const;
 
 export function BottomNav() {
@@ -32,8 +26,8 @@ export function BottomNav() {
       className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2"
       aria-label="Main navigation"
     >
-      <div className="mx-auto max-w-lg rounded-[1.35rem] bg-white px-2 py-3 shadow-[0_-8px_30px_rgba(0,0,0,0.35),0_4px_20px_rgba(0,0,0,0.15)] ring-1 ring-zinc-200/90">
-        <ul className="flex items-stretch justify-around gap-1">
+      <div className="mx-auto max-w-lg rounded-2xl border border-white/10 bg-zinc-900/70 px-2 py-3 shadow-[0_-12px_40px_rgba(0,0,0,0.5)] ring-1 ring-white/5 backdrop-blur-xl">
+        <ul className="flex items-stretch justify-center gap-10">
           {items.map(({ href, label, Icon, isActive }) => {
             const active = isActive(pathname);
             return (
@@ -42,8 +36,8 @@ export function BottomNav() {
                   href={href}
                   className={`flex flex-col items-center gap-1 rounded-xl py-1 transition-colors ${
                     active
-                      ? "text-zinc-900"
-                      : "text-zinc-500 hover:text-zinc-700"
+                      ? "text-teal-300"
+                      : "text-zinc-500 hover:text-zinc-300"
                   }`}
                 >
                   <Icon active={active} />
@@ -67,7 +61,7 @@ function HomeIcon({ active }: { active: boolean }) {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
-      className={active ? "text-zinc-900" : "text-zinc-500"}
+      className={active ? "text-teal-300" : "text-zinc-500"}
       aria-hidden
     >
       <path
@@ -87,7 +81,7 @@ function InvoiceIcon({ active }: { active: boolean }) {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
-      className={active ? "text-zinc-900" : "text-zinc-500"}
+      className={active ? "text-teal-300" : "text-zinc-500"}
       aria-hidden
     >
       <path
@@ -106,29 +100,3 @@ function InvoiceIcon({ active }: { active: boolean }) {
   );
 }
 
-function ProfileIcon({ active }: { active: boolean }) {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      className={active ? "text-zinc-900" : "text-zinc-500"}
-      aria-hidden
-    >
-      <path
-        d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <circle
-        cx="12"
-        cy="7"
-        r="4"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-    </svg>
-  );
-}

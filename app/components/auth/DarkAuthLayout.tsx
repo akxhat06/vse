@@ -8,17 +8,17 @@ type DarkAuthLayoutProps = {
 
 export function DarkAuthLayout({ kicker, title, children }: DarkAuthLayoutProps) {
   return (
-    <div className="relative min-h-dvh w-full overflow-x-hidden overflow-y-auto bg-[#0b0b1a] font-sans text-white">
+    <div className="relative min-h-dvh w-full overflow-x-hidden overflow-y-auto bg-background font-sans text-foreground">
       <DarkBackdrop />
 
       <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-lg flex-col sm:py-8">
         <div className="min-h-[24vh] shrink-0 sm:min-h-[20vh]" aria-hidden />
 
-        <div className="flex flex-1 flex-col rounded-t-[1.75rem] bg-[#06060d] px-5 pb-10 pt-7 shadow-[0_-12px_48px_rgba(0,0,0,0.55)] ring-1 ring-white/[0.06] sm:rounded-2xl sm:shadow-2xl">
-          <p className="text-[11px] font-semibold tracking-[0.24em] text-[#8b86a8]">
+        <div className="flex flex-1 flex-col rounded-t-[1.75rem] border border-white/5 bg-card px-5 pb-10 pt-7 shadow-[0_-12px_48px_rgba(0,0,0,0.55)] sm:rounded-2xl sm:shadow-2xl">
+          <p className="text-[11px] font-semibold tracking-[0.24em] text-muted-foreground">
             {kicker}
           </p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-[2rem]">
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-[2rem]">
             {title}
           </h1>
           <div className="mt-8 flex-1">{children}</div>
