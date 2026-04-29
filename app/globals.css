@@ -156,3 +156,13 @@
 .hover-back:hover {
   color: rgba(255,255,255,0.8) !important;
 }
+
+/* Primary QA card — reveal inset glow on hover */
+.qa-card:hover {
+  border-color: rgba(255,255,255,0.18) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+}
+.qa-card:hover > div:first-child {
+  opacity: 1 !important;
+}
