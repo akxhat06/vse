@@ -3,18 +3,49 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, useState } from "react";
-import {
-  EyeIcon,
-  EyeOffIcon,
-  LockIcon,
-  MailIcon,
-} from "@/app/components/auth/icons";
+import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from "@/app/components/auth/icons";
 import { createClient } from "@/lib/supabase/client";
+
+/* ── shared input field wrapper ── */
+function Field({
+  label,
+  id,
+  children,
+}: {
+  label: string;
+  id: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label
+        htmlFor={id}
+        className="block text-[11px] font-semibold uppercase tracking-widest"
+        style={{ color: "rgba(165,180,252,0.65)" }}
+      >
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+const inputWrap: React.CSSProperties = {
+  background: "rgba(255,255,255,0.06)",
+  border: "1px solid rgba(255,255,255,0.1)",
+  borderRadius: "0.875rem",
+};
+
+const inputFocusWrap: React.CSSProperties = {
+  border: "1px solid rgba(129,140,248,0.5)",
+  boxShadow: "0 0 0 3px rgba(129,140,248,0.1)",
+};
 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(() => {
     const q = searchParams.get("error");
     if (q === "auth") return "Session could not be established. Try again.";
@@ -32,14 +63,8 @@ export function LoginForm() {
     const password = String(form.get("password") ?? "");
     try {
       const supabase = createClient();
-      const { error: signError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (signError) {
-        setError(signError.message);
-        return;
-      }
+      const { error: signError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signError) { setError(signError.message); return; }
       router.push("/home");
       router.refresh();
     } catch {
@@ -50,101 +75,135 @@ export function LoginForm() {
   }
 
   return (
-    <form className="font-sans" onSubmit={handleSubmit} noValidate>
-      {error ? (
-        <p
-          className="mb-4 rounded-xl border border-red-500/30 bg-red-950/40 px-3 py-2 text-sm text-red-200"
-          role="alert"
+    <form onSubmit={handleSubmit} noValidate className="space-y-5">
+
+      {/* Error */}
+      {error && (
+        <div
+          className="flex items-start gap-2.5 rounded-xl px-4 py-3 text-sm"
+          style={{
+            background: "rgba(248,113,113,0.1)",
+            border: "1px solid rgba(248,113,113,0.25)",
+            color: "rgba(252,165,165,0.9)",
+          }}
         >
+          <span className="mt-0.5 shrink-0">⚠</span>
           {error}
-        </p>
-      ) : null}
-
-      <div className="mb-6">
-        <label
-          htmlFor="login-email"
-          className="mb-2 block text-[11px] font-semibold tracking-[0.18em] text-[#8b86a8]"
-        >
-          EMAIL ADDRESS
-        </label>
-        <div className="rounded-2xl bg-[#12121f] p-1.5 ring-1 ring-white/[0.06]">
-          <div className="flex items-center gap-3 rounded-xl bg-[#2a2836] px-3.5 py-3">
-            <MailIcon className="shrink-0 text-violet-300/45" />
-            <input
-              id="login-email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              placeholder="demo@email.com"
-              className="w-full min-w-0 border-0 bg-transparent text-sm text-white outline-none placeholder:text-[#6d6a80]"
-            />
-          </div>
         </div>
-      </div>
+      )}
 
-      <div className="mb-6">
-        <label
-          htmlFor="login-password"
-          className="mb-2 block text-[11px] font-semibold tracking-[0.18em] text-[#8b86a8]"
+      {/* Email */}
+      <Field label="Email address" id="login-email">
+        <div
+          className="flex items-center gap-3 px-3.5 py-3 transition-all"
+          style={focusedField === "email" ? { ...inputWrap, ...inputFocusWrap } : inputWrap}
         >
-          PASSWORD
-        </label>
-        <div className="rounded-2xl bg-[#12121f] p-1.5 ring-1 ring-white/[0.06]">
-          <div className="flex items-stretch gap-2 rounded-xl bg-[#2a2836] py-1.5 pl-3.5">
-            <LockIcon className="mt-2.5 shrink-0 self-start text-violet-300/45" />
-            <input
-              id="login-password"
-              name="password"
-              type={showPassword ? "text" : "password"}
-              autoComplete="current-password"
-              required
-              placeholder="enter your password"
-              className="min-w-0 flex-1 border-0 bg-transparent py-2 text-sm text-white outline-none placeholder:text-[#6d6a80]"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              className="flex shrink-0 items-center justify-center rounded-lg bg-[#1c1b26] px-3 text-violet-200/70 transition-colors hover:bg-[#252432] hover:text-white"
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? <EyeOffIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-            </button>
-          </div>
+          <MailIcon className="size-4 shrink-0" style={{ color: "rgba(129,140,248,0.6)" }} />
+          <input
+            id="login-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            placeholder="you@example.com"
+            onFocus={() => setFocusedField("email")}
+            onBlur={() => setFocusedField(null)}
+            className="w-full min-w-0 bg-transparent text-sm text-white outline-none placeholder:text-white/25"
+          />
         </div>
-      </div>
+      </Field>
 
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
-        <label className="flex cursor-pointer items-center gap-2.5 text-sm text-[#9d98b8]">
-          <input type="checkbox" name="remember" className="peer sr-only" />
-          <span className="flex h-5 w-5 items-center justify-center rounded-md border border-violet-400/35 bg-gradient-to-b from-[#5c3d9e] to-[#4a3290] shadow-inner shadow-black/20 transition-colors peer-checked:border-[#9d72ff]/60 peer-checked:from-[#7b52c9] peer-checked:to-[#6b46c1] peer-focus-visible:ring-2 peer-focus-visible:ring-[#9d72ff]/40 peer-checked:[&>.dot]:opacity-100">
-            <span className="dot h-2 w-2 rounded-full bg-white opacity-0 shadow" />
+      {/* Password */}
+      <Field label="Password" id="login-password">
+        <div
+          className="flex items-center gap-3 px-3.5 transition-all"
+          style={focusedField === "password" ? { ...inputWrap, ...inputFocusWrap } : inputWrap}
+        >
+          <LockIcon className="size-4 shrink-0" style={{ color: "rgba(129,140,248,0.6)" }} />
+          <input
+            id="login-password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            required
+            placeholder="your password"
+            onFocus={() => setFocusedField("password")}
+            onBlur={() => setFocusedField(null)}
+            className="min-w-0 flex-1 bg-transparent py-3 text-sm text-white outline-none placeholder:text-white/25"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg transition"
+            style={{ color: "rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.05)" }}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
+          </button>
+        </div>
+      </Field>
+
+      {/* Remember + Forgot */}
+      <div className="flex items-center justify-between gap-3 pt-1">
+        <label className="flex cursor-pointer items-center gap-2 text-sm" style={{ color: "rgba(255,255,255,0.45)" }}>
+          <span
+            className="relative flex size-4 shrink-0 items-center justify-center rounded"
+            style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)" }}
+          >
+            <input type="checkbox" name="remember" className="peer sr-only" />
+            <span className="absolute inset-0 hidden rounded peer-checked:flex items-center justify-center" style={{ background: "rgba(129,140,248,0.4)" }}>
+              <svg className="size-2.5 text-white" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="1.5 6 4.5 9 10.5 3" /></svg>
+            </span>
           </span>
           Remember me
         </label>
         <Link
           href="/forgot-password"
-          className="rounded-xl border border-white/15 bg-[#0e0e16] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:border-white/25 hover:bg-[#14141f]"
+          className="text-sm font-medium transition"
+          style={{ color: "rgba(165,180,252,0.75)" }}
         >
           Forgot password?
         </Link>
       </div>
 
+      {/* Submit */}
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-2xl border border-white/15 bg-[#12121c] py-4 text-center text-base font-bold text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] transition-colors hover:border-white/25 hover:bg-[#181824] disabled:opacity-50"
+        className="relative w-full overflow-hidden rounded-2xl py-3.5 text-sm font-bold text-white transition disabled:opacity-50"
+        style={{
+          background: "linear-gradient(135deg, rgba(99,102,241,0.7) 0%, rgba(139,92,246,0.6) 100%)",
+          border: "1px solid rgba(129,140,248,0.35)",
+          boxShadow: "0 4px 24px rgba(99,102,241,0.25)",
+        }}
       >
-        {loading ? "Signing in…" : "Login"}
+        {loading ? (
+          <span className="flex items-center justify-center gap-2">
+            <svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a10 10 0 100 20v-4l-3 3 3 3v-4a8 8 0 01-8-8z" />
+            </svg>
+            Signing in…
+          </span>
+        ) : "Sign in"}
       </button>
 
-      <p className="mt-10 text-center text-sm text-[#9d98b8]">
+      {/* Divider */}
+      <div className="flex items-center gap-3 py-1">
+        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
+        <span className="text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>or</span>
+        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
+      </div>
+
+      {/* Sign up link */}
+      <p className="text-center text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
         Don&apos;t have an account?{" "}
         <Link
           href="/signup"
-          className="font-semibold text-[#9d72ff] hover:text-[#b898ff]"
+          className="font-semibold transition"
+          style={{ color: "#a5b4fc" }}
         >
-          Sign up
+          Create one
         </Link>
       </p>
     </form>

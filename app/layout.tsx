@@ -13,8 +13,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VSE — Invoice management",
-  description: "Create, send, and track invoices in one workspace",
+  title: "Vishwa Shree Enterprises",
+  description: "Bill management workspace for Vishwa Shree Enterprises",
+  icons: {
+    icon: "/app_icon.svg",
+    shortcut: "/app_icon.svg",
+    apple: "/app_icon.svg",
+  },
 };
 
 export default function RootLayout({

@@ -1,0 +1,48 @@
+<svg width="100%" viewBox="0 0 680 420" role="img" xmlns="http://www.w3.org/2000/svg" style="">
+  <title style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">Vishwa Shree Enterprises Logo</title>
+  <desc style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">Modern minimal logo for Vishwa Shree Enterprises, a commission agent for branded clothing, in magenta and dark tones</desc>
+
+  <defs>
+    
+  </defs>
+
+  <!-- Logo container centered -->
+  <g transform="translate(340, 210)" style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+
+    <!-- Fabric weave / thread crossing symbol -->
+    <!-- Two diagonal crossing bars forming a stylized V/link shape -->
+    <!-- Left diagonal bar -->
+    <rect x="-62" y="-48" width="16" height="96" rx="8" fill="#A40E4C" transform="rotate(-18)" style="fill:rgb(164, 14, 76);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+    <!-- Right diagonal bar -->
+    <rect x="46" y="-48" width="16" height="96" rx="8" fill="#A40E4C" transform="rotate(18)" style="fill:rgb(164, 14, 76);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+    <!-- Center connecting bridge — horizontal thread -->
+    <rect x="-28" y="-6" width="56" height="12" rx="6" fill="#2B2D42" style="fill:rgb(43, 45, 66);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+    <!-- Top accent dot — fabric node -->
+    <circle cx="0" cy="-52" r="7" fill="#A40E4C" style="fill:rgb(164, 14, 76);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+    <!-- Bottom accent dot -->
+    <circle cx="0" cy="52" r="5" fill="#2B2D42" opacity="0.5" style="fill:rgb(43, 45, 66);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.5;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+    <!-- Company name -->
+    <text x="0" y="100" text-anchor="middle" font-size="32" font-weight="600" letter-spacing="3" fill="#2B2D42" style="fill:rgb(43, 45, 66);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Cormorant Garamond&quot;, Georgia, serif;font-size:32px;font-weight:600;text-anchor:middle;dominant-baseline:auto">VISHWA SHREE</text>
+
+    <!-- Sub name -->
+    <text x="0" y="128" text-anchor="middle" font-size="18" font-weight="400" letter-spacing="6" fill="#A40E4C" style="fill:rgb(164, 14, 76);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Cormorant Garamond&quot;, Georgia, serif;font-size:18px;font-weight:400;text-anchor:middle;dominant-baseline:auto">ENTERPRISES</text>
+
+    <!-- Divider line -->
+    <line x1="-130" y1="148" x2="130" y2="148" stroke="#A40E4C" stroke-width="0.8" opacity="0.6" style="fill:rgb(0, 0, 0);stroke:rgb(164, 14, 76);color:rgb(255, 255, 255);stroke-width:0.8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.6;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+    <!-- Tagline -->
+    
+  </g>
+
+  <!-- Light accent marks top corners — like fabric selvedge marks -->
+  <rect x="52" y="48" width="40" height="1.5" rx="0.75" fill="#A40E4C" opacity="0.25" style="fill:rgb(164, 14, 76);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.25;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <rect x="52" y="54" width="24" height="1.5" rx="0.75" fill="#A40E4C" opacity="0.15" style="fill:rgb(164, 14, 76);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.15;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <rect x="588" y="48" width="40" height="1.5" rx="0.75" fill="#A40E4C" opacity="0.25" style="fill:rgb(164, 14, 76);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.25;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <rect x="604" y="54" width="24" height="1.5" rx="0.75" fill="#A40E4C" opacity="0.15" style="fill:rgb(164, 14, 76);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.15;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+</svg>

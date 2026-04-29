@@ -23,6 +23,7 @@ export default async function MainAppLayout({
     "User";
 
   const email = user.email ?? "";
+  const avatarUrl = (user.user_metadata?.avatar_url as string | undefined) ?? "";
 
   return (
     <div className="flex min-h-dvh">
@@ -31,7 +32,7 @@ export default async function MainAppLayout({
 
       {/* Main column */}
       <div className="flex flex-1 flex-col min-w-0">
-        <TopBar displayName={displayName} email={email} />
+        <TopBar displayName={displayName} email={email} avatarUrl={avatarUrl} />
 
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-8">
           {children}

@@ -32,16 +32,15 @@ export function Sidebar() {
     >
       {/* Logo */}
       <div
-        className="flex h-16 items-center px-6"
+        className="flex h-20 items-center px-4"
         style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
       >
-        <span className="text-lg font-bold tracking-tight text-white">VSE</span>
-        <span
-          className="ml-2 text-[11px] font-medium mt-0.5"
-          style={{ color: "rgba(255,255,255,0.35)" }}
-        >
-          Bills Manager
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/app_icon.svg"
+          alt="Vishwa Shree Enterprises"
+          style={{ height: 52, width: "auto", display: "block" }}
+        />
       </div>
 
       {/* Nav */}

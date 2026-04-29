@@ -157,6 +157,44 @@
   color: rgba(255,255,255,0.8) !important;
 }
 
+/* ── Auth page bubble animation ── */
+@keyframes bubble-rise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-110vh) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes bubble-sway {
+  0%, 100% { margin-left: 0; }
+  33%       { margin-left: 30px; }
+  66%       { margin-left: -20px; }
+}
+
+.auth-bubble {
+  position: absolute;
+  bottom: -80px;
+  border-radius: 9999px;
+  animation:
+    bubble-rise var(--dur, 10s) var(--delay, 0s) infinite ease-in,
+    bubble-sway calc(var(--dur, 10s) * 0.6) var(--delay, 0s) infinite ease-in-out;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-bubble { animation: none !important; opacity: 0 !important; }
+}
+
 /* Primary QA card — reveal inset glow on hover */
 .qa-card:hover {
   border-color: rgba(255,255,255,0.18) !important;
