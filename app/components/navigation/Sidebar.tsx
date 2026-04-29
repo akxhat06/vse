@@ -4,12 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV = [
-  { href: "/home", label: "Home", icon: HomeIcon },
+  { href: "/home",              label: "Home",      icon: HomeIcon     },
   { href: "/invoice/companies", label: "Companies", icon: BuildingIcon },
-  { href: "/invoice/retailers", label: "Retailers", icon: StoreIcon },
-  { href: "/invoice/invoices", label: "Bills / Invoice", icon: InvoiceIcon },
-  { href: "/invoice/payments", label: "Payment", icon: PaymentIcon },
-  { href: "/invoice/credit-notes", label: "Credit Note", icon: CreditIcon },
+  { href: "/invoice/retailers", label: "Retailers", icon: StoreIcon    },
+  { href: "/invoice/invoices",  label: "Invoices",  icon: InvoiceIcon  },
 ];
 
 function isActive(href: string, pathname: string) {

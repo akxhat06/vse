@@ -9,9 +9,18 @@ type Props = {
   confirmMessage?: string;
   onDelete: (id: string) => Promise<ActionResult>;
   iconOnly?: boolean;
+  /** Full-width row with trash icon — used on retailer cards */
+  variant?: "default" | "card";
 };
 
-export function DeleteEntityButton({ id, label = "Delete", confirmMessage = "Delete this record?", onDelete, iconOnly = false }: Props) {
+export function DeleteEntityButton({
+  id,
+  label = "Delete",
+  confirmMessage = "Delete this record?",
+  onDelete,
+  iconOnly = false,
+  variant = "default",
+}: Props) {
   const router = useRouter();
 
   const handleClick = async () => {
@@ -33,6 +42,20 @@ export function DeleteEntityButton({ id, label = "Delete", confirmMessage = "Del
         onClick={handleClick}
       >
         <TrashIcon className="size-3.5" />
+      </button>
+    );
+  }
+
+  if (variant === "card") {
+    return (
+      <button
+        type="button"
+        className="flex min-h-[44px] min-w-0 flex-1 items-center justify-center gap-2 rounded-lg text-sm font-semibold transition hover:brightness-95"
+        style={{ background: "#FEE2E2", color: "#991B1B" }}
+        onClick={handleClick}
+      >
+        <TrashIcon className="size-4 shrink-0" />
+        {label}
       </button>
     );
   }
