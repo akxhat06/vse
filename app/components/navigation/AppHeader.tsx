@@ -18,7 +18,7 @@ export function AppHeader() {
       aria-label="App header"
     >
       <div
-        className={`mx-auto flex max-w-lg items-center justify-between gap-3 ${shellNavClass}`}
+        className={`mx-auto flex max-w-5xl items-center justify-between gap-3 ${shellNavClass}`}
       >
         <span className="bg-gradient-to-r from-teal-200 via-cyan-200 to-sky-200 bg-clip-text pl-1 text-sm font-bold tracking-tight text-transparent">
           VSE

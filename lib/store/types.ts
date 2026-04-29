@@ -8,6 +8,15 @@ export type Company = {
   telephone?: string;
   altPhone?: string;
   address?: string;
+  email?: string;
+  city?: string;
+  state?: string;
+  pinCode?: string;
+  /** Bank details */
+  bankName?: string;
+  acNo?: string;
+  ifscCode?: string;
+  branch?: string;
   createdAt: string;
   updatedAt: string;
 };

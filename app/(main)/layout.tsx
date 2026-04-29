@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
-import { AppHeader } from "@/app/components/navigation/AppHeader";
-import { BottomNav } from "@/app/components/navigation/BottomNav";
 import { createClient } from "@/lib/supabase/server";
+import { Sidebar } from "@/app/components/navigation/Sidebar";
+import { MobileNav } from "@/app/components/navigation/MobileNav";
+import { TopBar } from "@/app/components/navigation/TopBar";
 
 export default async function MainAppLayout({
   children,
@@ -15,13 +16,30 @@ export default async function MainAppLayout({
 
   if (!user) redirect("/login");
 
+  const displayName =
+    (user.user_metadata?.full_name as string | undefined)?.trim() ||
+    (user.user_metadata?.username as string | undefined)?.trim() ||
+    user.email?.split("@")[0] ||
+    "User";
+
+  const email = user.email ?? "";
+
   return (
-    <div className="min-h-dvh text-foreground">
-      <AppHeader />
-      <main className="mx-auto min-h-dvh w-full max-w-lg px-5 sm:px-6 pt-[calc(4.15rem+env(safe-area-inset-top))] pb-[calc(5.75rem+env(safe-area-inset-bottom))]">
-        {children}
-      </main>
-      <BottomNav />
+    <div className="flex min-h-dvh">
+      {/* Desktop sidebar */}
+      <Sidebar />
+
+      {/* Main column */}
+      <div className="flex flex-1 flex-col min-w-0">
+        <TopBar displayName={displayName} email={email} />
+
+        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-8">
+          {children}
+        </main>
+      </div>
+
+      {/* Mobile bottom nav */}
+      <MobileNav />
     </div>
   );
 }

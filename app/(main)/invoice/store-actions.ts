@@ -53,6 +53,14 @@ export async function saveCompany(
   const altRaw = String(formData.get("altPhone") ?? "").trim();
   const altPhone = altRaw ? normalizePhone10(altRaw) : undefined;
   const address = String(formData.get("address") ?? "").trim() || undefined;
+  const email = String(formData.get("email") ?? "").trim() || undefined;
+  const city = String(formData.get("city") ?? "").trim() || undefined;
+  const state = String(formData.get("state") ?? "").trim() || undefined;
+  const pinCode = String(formData.get("pinCode") ?? "").trim() || undefined;
+  const bankName = String(formData.get("bankName") ?? "").trim() || undefined;
+  const acNo = String(formData.get("acNo") ?? "").trim() || undefined;
+  const ifscCode = String(formData.get("ifscCode") ?? "").trim().toUpperCase() || undefined;
+  const branch = String(formData.get("branch") ?? "").trim() || undefined;
 
   if (!name) return { ok: false, error: "Company name is required." };
   if (!isValidPhone10(phone))
@@ -61,6 +69,8 @@ export async function saveCompany(
     return { ok: false, error: "GST number must be 15 characters." };
   if (altPhone && !isValidPhone10(altPhone))
     return { ok: false, error: "Alternative number must be 10 digits." };
+  if (pinCode && !/^\d{6}$/.test(pinCode))
+    return { ok: false, error: "PIN code must be 6 digits." };
 
   const store = await loadStore();
   const t = nowIso();
@@ -73,6 +83,14 @@ export async function saveCompany(
     telephone,
     altPhone,
     address,
+    email,
+    city,
+    state,
+    pinCode,
+    bankName,
+    acNo,
+    ifscCode,
+    branch,
     createdAt: idx >= 0 ? store.companies[idx].createdAt : t,
     updatedAt: t,
   };

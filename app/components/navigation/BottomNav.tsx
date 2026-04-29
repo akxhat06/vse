@@ -26,7 +26,7 @@ export function BottomNav() {
       className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2"
       aria-label="Main navigation"
     >
-      <div className="mx-auto max-w-lg rounded-2xl border border-white/10 bg-zinc-900/70 px-2 py-3 shadow-[0_-12px_40px_rgba(0,0,0,0.5)] ring-1 ring-white/5 backdrop-blur-xl">
+        <div className="mx-auto max-w-5xl rounded-2xl border border-white/10 bg-zinc-900/70 px-2 py-3 shadow-[0_-12px_40px_rgba(0,0,0,0.5)] ring-1 ring-white/5 backdrop-blur-xl">
         <ul className="flex items-stretch justify-center gap-10">
           {items.map(({ href, label, Icon, isActive }) => {
             const active = isActive(pathname);
