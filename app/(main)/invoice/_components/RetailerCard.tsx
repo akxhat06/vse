@@ -124,7 +124,7 @@
           {/* Actions */}                                                                                                                                                                 
           <div className="flex shrink-0 items-center gap-1.5">
             <Link
-              href={`/invoice/retailers/${id}/edit`}
+              href={`/invoice/retailers/${id}`}
               className="flex size-8 items-center justify-center transition active:opacity-70"                                                                                            
               style={{
                 background: "rgba(255,255,255,0.03)",                                                                                                                                     
