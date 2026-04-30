@@ -183,7 +183,9 @@ export function EditRetailerClient({
             amount: i.invoiceAmount,                                                                                                                                                    
           }))}  
           emptyText="No invoices for this retailer."
-          openHref={(id) => `/invoice/invoices/${id}`}                                                                                                                                  
+          openHref={(id) =>
+            `/invoice/invoices/${id}?returnTo=${encodeURIComponent(`/invoice/retailers/${retailer.id}`)}`
+          }
           newHref={`/invoice/invoices/new?retailerId=${retailer.id}&returnTo=${encodeURIComponent(`/invoice/retailers/${retailer.id}`)}`}                                               
           newLabel="New invoice"                                                                                                                                                        
         />                                                                                                                                                                              

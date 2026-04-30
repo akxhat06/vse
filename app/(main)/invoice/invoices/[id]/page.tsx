@@ -35,7 +35,7 @@ import Link from "next/link";
       <div className="mx-auto max-w-2xl space-y-6 pb-6">
         {/* Back */}                                                                                                                                                                      
         <Link
-          href="/invoice/invoices"                                                                                                                                                        
+          href={redirectTo}
           className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] transition active:opacity-70"                                                               
           style={{                                                                                                                                                                        
             fontFamily: MONO,                                                                                                                                                             
@@ -43,7 +43,7 @@ import Link from "next/link";
           }}                                                                                                                                                                              
         >                                                                                                                                                                                 
           <span style={{ color: AMBER }}>←</span>
-          <span>Invoices</span>                                                                                                                                                           
+          <span>{redirectTo === "/invoice/invoices" ? "Invoices" : "Back"}</span>
         </Link>   
                                                                                                                                                                                           
         {/* Heading + Delete */}
