@@ -1,109 +1,190 @@
 "use client";
+                                                                                                                                                                                          
+  import Link from "next/link";
+  import { usePathname } from "next/navigation";
+                                                                                                                                                                                          
+  const AMBER = "rgb(245,158,11)";
+  const MONO = "var(--font-mono)";                                                                                                                                                        
+                  
+  const NAV = [
+    { href: "/home",              label: "Home",      icon: HomeIcon },
+    { href: "/invoice/companies", label: "Companies",     icon: BuildingIcon },                                                                                                               
+    { href: "/invoice/retailers", label: "Retailers",    icon: StoreIcon },
+    { href: "/invoice/invoices",  label: "Bills",     icon: InvoiceIcon },                                                                                                                
+  ];              
+                                                                                                                                                                                          
+  function isActive(href: string, pathname: string) {                                                                                                                                     
+    if (href === "/home") return pathname === "/home";
+    return pathname === href || pathname.startsWith(href + "/");                                                                                                                          
+  }               
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-const NAV = [
-  { href: "/home",              label: "Home",      icon: HomeIcon     },
-  { href: "/invoice/companies", label: "Companies", icon: BuildingIcon },
-  { href: "/invoice/retailers", label: "Retailers", icon: StoreIcon    },
-  { href: "/invoice/invoices",  label: "Invoices",  icon: InvoiceIcon  },
-];
-
-function isActive(href: string, pathname: string) {
-  if (href === "/home") return pathname === "/home";
-  return pathname === href || pathname.startsWith(href + "/");
-}
-
-export function MobileNav() {
-  const pathname = usePathname();
-
-  return (
-    <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-50"
-      style={{
-        paddingBottom: "env(safe-area-inset-bottom)",
-        background: "rgba(9,9,15,0.85)",
-        borderTop: "1px solid rgba(255,255,255,0.07)",
-        backdropFilter: "blur(28px)",
-        WebkitBackdropFilter: "blur(28px)",
-      }}
-      aria-label="Mobile navigation"
-    >
-      <ul className="flex items-stretch px-4 py-1">
-        {NAV.map(({ href, label, icon: Icon }) => {
-          const active = isActive(href, pathname);
-          return (
-            <li key={href} className="flex-1">
-              <Link
-                href={href}
-                className="relative flex flex-col items-center justify-center gap-1 rounded-xl py-2.5 transition-all"
-                style={{ color: active ? "#a5b4fc" : "rgba(255,255,255,0.32)" }}
-              >
-                {active && (
-                  <span
-                    className="absolute inset-x-1 inset-y-0.5 rounded-xl"
-                    style={{
-                      background: "rgba(129,140,248,0.14)",
-                      border: "1px solid rgba(129,140,248,0.2)",
-                    }}
-                  />
+  export function MobileNav() {                                                                                                                                                           
+    const pathname = usePathname();
+                                                                                                                                                                                          
+    return (      
+      <nav
+        className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
+        style={{
+          paddingBottom: "env(safe-area-inset-bottom)",
+          background: "#0a0a0d",                                                                                                                                                          
+          borderTop: "1px solid rgba(255,255,255,0.08)",
+        }}                                                                                                                                                                                
+        aria-label="Mobile navigation"                                                                                                                                                    
+      >
+        {/* Soft amber wash above the bar */}                                                                                                                                             
+        <div                                                                                                                                                                              
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 -top-8 h-8"                                                                                                                   
+          style={{                                                                                                                                                                        
+            background:
+              "linear-gradient(180deg, transparent, rgba(245,158,11,0.06))",                                                                                                              
+          }}                                                                                                                                                                              
+        />
+                                                                                                                                                                                          
+        {/* Top hairline glow */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-px"
+          style={{                                                                                                                                                                        
+            background: `linear-gradient(90deg, transparent, ${AMBER}, transparent)`,
+            opacity: 0.5,                                                                                                                                                                 
+          }}                                                                                                                                                                              
+        />
+                                                                                                                                                                                          
+        <ul className="flex items-stretch">
+          {NAV.map(({ href, label, icon: Icon }, i) => {
+            const active = isActive(href, pathname);
+            return (                                                                                                                                                                      
+              <li key={href} className="relative flex-1">
+                {/* Vertical hairline between tabs */}                                                                                                                                    
+                {i > 0 && (
+                  <span                                                                                                                                                                   
+                    aria-hidden
+                    className="pointer-events-none absolute inset-y-3 left-0 w-px"                                                                                                        
+                    style={{ background: "rgba(255,255,255,0.06)" }}
+                  />                                                                                                                                                                      
                 )}
-                <span className="relative">
-                  <Icon active={active} />
-                  {active && (
-                    <span
-                      className="absolute -top-0.5 -right-0.5 size-1.5 rounded-full"
-                      style={{ background: "#818cf8", boxShadow: "0 0 6px #818cf8" }}
-                    />
-                  )}
-                </span>
-                <span
-                  className="relative text-[11px] font-semibold tracking-wide"
-                  style={{ color: active ? "#a5b4fc" : "rgba(255,255,255,0.32)" }}
-                >
-                  {label}
-                </span>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
-  );
-}
+                                                                                                                                                                                          
+                <Link
+                  href={href}
+                  className="relative flex flex-col items-center justify-center gap-1.5 py-3 transition-opacity active:opacity-60"
+                  style={{                                                                                                                                                                
+                    color: active ? AMBER : "rgba(255,255,255,0.4)",
+                  }}                                                                                                                                                                      
+                  aria-current={active ? "page" : undefined}
+                >                                                                                                                                                                         
+                  {/* Active top marker */}
+                  {active && (                                                                                                                                                            
+                    <>
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute inset-x-5 top-0 h-px"
+                        style={{                                                                                                                                                          
+                          background: AMBER,
+                          boxShadow: `0 0 8px ${AMBER}`,                                                                                                                                  
+                        }}                                                                                                                                                                
+                      />
+                      <span                                                                                                                                                               
+                        aria-hidden
+                        className="pointer-events-none absolute inset-x-0 inset-y-0"
+                        style={{
+                          background:                                                                                                                                                     
+                            "linear-gradient(180deg, rgba(245,158,11,0.07), transparent 70%)",
+                        }}                                                                                                                                                                
+                      />
+                    </>
+                  )}                                                                                                                                                                      
+   
+                  <span className="relative">                                                                                                                                             
+                    <Icon active={active} />
+                  </span>
 
-function HomeIcon({ active }: { active: boolean }) {
-  return (
-    <svg className="size-[22px]" viewBox="0 0 24 24" fill={active ? "rgba(129,140,248,0.2)" : "none"} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z" />
-    </svg>
-  );
-}
-function BuildingIcon({ active }: { active: boolean }) {
-  return (
-    <svg className="size-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <rect x="4" y="2" width="16" height="20" rx="2" fill={active ? "rgba(129,140,248,0.15)" : "none"} />
-      <path d="M9 22V12h6v10" />
-      <path d="M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01" />
-    </svg>
-  );
-}
-function StoreIcon({ active }: { active: boolean }) {
-  return (
-    <svg className="size-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M3 9l1-5h16l1 5" />
-      <path d="M3 9a2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0 2 2 2 2 0 0 0 2-2" fill={active ? "rgba(129,140,248,0.15)" : "none"} />
-      <path d="M5 22V11M19 11v11M9 22v-7h6v7" />
-    </svg>
-  );
-}
-
-function InvoiceIcon({ active }: { active: boolean }) {
-  return (
-    <svg className="size-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M8 4h8a2 2 0 0 1 2 2v14l-3-2-3 2-3-2-3 2V6a2 2 0 0 1 2-2Z" fill={active ? "rgba(129,140,248,0.15)" : "none"} />
-      <path d="M9 9h6M9 12h6M9 15h4" />
-    </svg>
-  );
-}
+                  <span
+                    className="relative text-[9px] uppercase tracking-[0.22em]"
+                    style={{ fontFamily: MONO }}                                                                                                                                          
+                  >
+                    {label}                                                                                                                                                               
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    );                                                                                                                                                                                    
+  }
+                                                                                                                                                                                          
+  /* ── Icons — minimal, single stroke, no fills ── */                                                                                                                                    
+   
+  function HomeIcon({ active }: { active: boolean }) {                                                                                                                                    
+    return (      
+      <svg
+        className="size-[18px]"
+        viewBox="0 0 24 24"                                                                                                                                                               
+        fill="none"
+        stroke="currentColor"                                                                                                                                                             
+        strokeWidth={active ? 1.6 : 1.3}
+        strokeLinecap="round"                                                                                                                                                             
+        strokeLinejoin="round"
+        aria-hidden                                                                                                                                                                       
+      >           
+        <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z" />
+      </svg>                                                                                                                                                                              
+    );
+  }                                                                                                                                                                                       
+                  
+  function BuildingIcon({ active }: { active: boolean }) {                                                                                                                                
+    return (
+      <svg                                                                                                                                                                                
+        className="size-[18px]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={active ? 1.6 : 1.3}                                                                                                                                                  
+        strokeLinecap="round"
+        strokeLinejoin="round"                                                                                                                                                            
+        aria-hidden
+      >                                                                                                                                                                                   
+        <rect x="4" y="2" width="16" height="20" />
+        <path d="M9 22V14h6v8" />                                                                                                                                                         
+        <path d="M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01" />                                                                                                              
+      </svg>                                                                                                                                                                              
+    );                                                                                                                                                                                    
+  }                                                                                                                                                                                       
+                  
+  function StoreIcon({ active }: { active: boolean }) {                                                                                                                                   
+    return (
+      <svg                                                                                                                                                                                
+        className="size-[18px]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={active ? 1.6 : 1.3}                                                                                                                                                  
+        strokeLinecap="round"
+        strokeLinejoin="round"                                                                                                                                                            
+        aria-hidden
+      >
+        <path d="M3 9l1-5h16l1 5" />
+        <path d="M3 9a2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0" />                                                                                                         
+        <path d="M5 22V11M19 22V11M9 22v-7h6v7" />                                                                                                                                        
+      </svg>                                                                                                                                                                              
+    );                                                                                                                                                                                    
+  }                                                                                                                                                                                       
+                  
+  function InvoiceIcon({ active }: { active: boolean }) {
+    return (
+      <svg
+        className="size-[18px]"                                                                                                                                                           
+        viewBox="0 0 24 24"
+        fill="none"                                                                                                                                                                       
+        stroke="currentColor"
+        strokeWidth={active ? 1.6 : 1.3}
+        strokeLinecap="round"                                                                                                                                                             
+        strokeLinejoin="round"
+        aria-hidden                                                                                                                                                                       
+      >           
+        <path d="M8 4h8a2 2 0 0 1 2 2v14l-3-2-3 2-3-2-3 2V6a2 2 0 0 1 2-2Z" />
+        <path d="M9 9h6M9 12h6M9 15h4" />                                                                                                                                                 
+      </svg>                                                                                                                                                                              
+    );                                                                                                                                                                                    
+  }      
