@@ -203,137 +203,123 @@ import Link from "next/link";
                 const st = STATUS[statusKey];
                                                                                                                                                                                           
                 return (
-                  <article
-                    key={inv.id}
-                    className="relative overflow-hidden"
-                    style={{                                                                                                                                                              
-                      background: "rgba(255,255,255,0.02)",
-                      border: "1px solid rgba(255,255,255,0.08)",                                                                                                                         
-                    }}                                                                                                                                                                    
-                  >
-                    <div                                                                                                                                                                  
-                      aria-hidden
-                      className="absolute inset-x-0 top-0 h-px"
-                      style={{                                                                                                                                                            
-                        background: `linear-gradient(90deg, ${st.color}, transparent 70%)`,
-                      }}                                                                                                                                                                  
+                  <article                                                                                                                                                                                
+                  key={inv.id}                                                                                                                                                                          
+                  className="relative overflow-hidden"                                                                                                                                                  
+                  style={{                                                                                                                                                                              
+                    background: "rgba(255,255,255,0.02)",
+                    border: "1px solid rgba(255,255,255,0.08)",                                                                                                                                         
+                  }}
+                >                                                                                                                                                                                       
+                  {/* Top status hairline */}                                                                                                                                                           
+                  <div
+                    aria-hidden                                                                                                                                                                         
+                    className="absolute inset-x-0 top-0 h-px"
+                    style={{                                                                                                                                                                            
+                      background: `linear-gradient(90deg, ${st.color}, transparent 70%)`,
+                    }}                                                                                                                                                                                  
+                  />            
+                                                                                                                                                                                                        
+                  {/* Delete — top right corner */}
+                  <div className="absolute right-2 top-2 z-10">
+                    <DeleteEntityButton                                                                                                                                                                 
+                      id={inv.id}
+                      onDelete={deleteInvoice}                                                                                                                                                          
+                      confirmMessage="Delete this invoice? Remove payments and credit notes first."
+                      iconOnly                                                                                                                                                                          
                     />
-                                                                                                                                                                                          
-                    <div className="flex flex-col gap-2.5 p-3">
-                      {/* Top row */}
-                      <div className="flex items-start justify-between gap-3">                                                                                                            
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">                                                                                                                       
+                  </div>                                                                                                                                                                                
+                                
+                  {/* Card body — whole area opens edit */}                                                                                                                                             
+                  <Link
+                    href={`/invoice/invoices/${inv.id}`}                                                                                                                                                
+                    className="block transition-opacity active:opacity-70"
+                  >                                                                                                                                                                                     
+                    <div className="flex flex-col gap-2.5 p-3 pr-12">
+                      {/* Top row */}                                                                                                                                                                   
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">                                                                                                                                                
+                          <div className="flex items-center gap-2">                                                                                                                                     
                             <p
-                              className="truncate text-[13px] font-medium leading-tight text-white"                                                                                       
-                              style={{ fontFamily: MONO }}                                                                                                                                
-                            >
-                              {inv.invoiceNo}                                                                                                                                             
-                            </p>
+                              className="truncate text-[13px] font-medium leading-tight text-white"                                                                                                     
+                              style={{ fontFamily: MONO }}
+                            >                                                                                                                                                                           
+                              {inv.invoiceNo}
+                            </p>                                                                                                                                                                        
                             <span
-                              className="flex shrink-0 items-center gap-1 px-1 py-0.5 text-[8px] uppercase tracking-[0.2em]"                                                              
-                              style={{                                                                                                                                                    
-                                fontFamily: MONO,                                                                                                                                         
-                                color: st.color,                                                                                                                                          
+                              className="flex shrink-0 items-center gap-1 px-1 py-0.5 text-[8px] uppercase tracking-[0.2em]"
+                              style={{                                                                                                                                                                  
+                                fontFamily: MONO,
+                                color: st.color,                                                                                                                                                        
                                 border: `1px solid ${st.color}55`,
-                              }}                                                                                                                                                          
+                              }}
                             >
-                              <span                                                                                                                                                       
+                              <span                                                                                                                                                                     
                                 className="size-1 rounded-full"
-                                style={{ background: st.color }}
-                              />                                                                                                                                                          
+                                style={{ background: st.color }}                                                                                                                                        
+                              />
                               {st.label}
-                            </span>                                                                                                                                                       
+                            </span>
                           </div>
-                          <p
+                          <p                                                                                                                                                                            
                             className="mt-1 truncate text-[10px] uppercase tracking-[0.18em]"
-                            style={{                                                                                                                                                      
+                            style={{                                                                                                                                                                    
                               fontFamily: MONO,
-                              color: "rgba(255,255,255,0.4)",                                                                                                                             
-                            }}                                                                                                                                                            
+                              color: "rgba(255,255,255,0.4)",                                                                                                                                           
+                            }}  
                           >
-                            {co?.name ?? "—"} · {ret?.name ?? "—"}                                                                                                                        
-                          </p>
-                          <p                                                                                                                                                              
-                            className="mt-0.5 text-[9px] uppercase tracking-[0.2em] tabular-nums"
-                            style={{                                                                                                                                                      
-                              fontFamily: MONO,                                                                                                                                           
-                              color: "rgba(255,255,255,0.3)",
-                            }}                                                                                                                                                            
+                            {co?.name ?? "—"} · {ret?.name ?? "—"}
+                          </p>                                                                                                                                                                          
+                          <p                                                                                                                                                                            
+                            className="mt-0.5 text-[9px] uppercase tracking-[0.2em] tabular-nums"                                                                                                       
+                            style={{                                                                                                                                                                    
+                              fontFamily: MONO,
+                              color: "rgba(255,255,255,0.3)",                                                                                                                                           
+                            }}  
                           >
                             {formatDate(inv.invoiceDate)}
-                          </p>                                                                                                                                                            
+                          </p>                                                                                                                                                                          
                         </div>
-                                                                                                                                                                                          
-                        {/* Amount */}
-                        <p
+                                                                                                                                                                                                        
+                        <p      
                           className="shrink-0 text-[15px] tabular-nums"
-                          style={{                                                                                                                                                        
-                            fontFamily: MONO,
-                            color: AMBER,                                                                                                                                                 
-                          }}
+                          style={{ fontFamily: MONO, color: AMBER }}                                                                                                                                    
                         >
-                          {inr.format(inv.invoiceAmount)}
-                        </p>                                                                                                                                                              
+                          {inr.format(inv.invoiceAmount)}                                                                                                                                               
+                        </p>                                                                                                                                                                            
                       </div>
-                                                                                                                                                                                          
+                                                                                                                                                                                                        
                       {/* Inline meta */}
                       <div
-                        className="flex items-baseline justify-between gap-3 py-2"                                                                                                        
+                        className="flex items-baseline justify-between gap-3 py-2"                                                                                                                      
                         style={{
-                          borderTop:                                                                                                                                                      
-                            "1px solid rgba(255,255,255,0.06)",                                                                                                                           
-                          borderBottom:
-                            "1px solid rgba(255,255,255,0.06)",                                                                                                                           
-                        }}                                                                                                                                                                
-                      >
-                        <Meta                                                                                                                                                             
+                          borderTop: "1px solid rgba(255,255,255,0.06)",                                                                                                                                
+                          borderBottom: "1px solid rgba(255,255,255,0.06)",                                                                                                                             
+                        }}
+                      >                                                                                                                                                                                 
+                        <Meta                                                                                                                                                                           
                           label="Paid"
-                          value={paid > 0 ? inr.format(paid) : "—"}
-                          active={paid > 0}                                                                                                                                               
+                          value={paid > 0 ? inr.format(paid) : "—"}                                                                                                                                     
+                          active={paid > 0}                                                                                                                                                             
                           color={GREEN}
-                        />                                                                                                                                                                
-                        <Meta                                                                                                                                                             
+                        />                                                                                                                                                                              
+                        <Meta   
                           label="Credit"
-                          value={                                                                                                                                                         
-                            credit > 0 ? inr.format(credit) : "—"
-                          }
+                          value={credit > 0 ? inr.format(credit) : "—"}                                                                                                                                 
                           active={credit > 0}
-                          color="rgba(255,255,255,0.85)"
-                        />                                                                                                                                                                
+                          color="rgba(255,255,255,0.85)"                                                                                                                                                
+                        />                                                                                                                                                                              
                         <Meta
-                          label="Balance"                                                                                                                                                 
+                          label="Balance"                                                                                                                                                               
                           value={inr.format(outstanding)}
-                          active={outstanding > 0}                                                                                                                                        
+                          active={outstanding > 0}
                           color={AMBER}
-                          align="right"                                                                                                                                                   
+                          align="right"                                                                                                                                                                 
                         />
-                      </div>                                                                                                                                                              
-   
-                      {/* Actions */}                                                                                                                                                     
-                      <div className="flex items-center gap-1">
-                        <ActionLink
-                          href={`/invoice/payments/new?invoiceId=${encodeURIComponent(inv.id)}&returnTo=${encodeURIComponent("/invoice/invoices")}`}
-                          label="Pay"                                                                                                                                                     
-                        />
-                        <ActionLink                                                                                                                                                       
-                          href={`/invoice/credit-notes/new?invoiceId=${encodeURIComponent(inv.id)}&returnTo=${encodeURIComponent("/invoice/invoices")}`}
-                          label="Return"                                                                                                                                                  
-                        />
-                        <ActionLink                                                                                                                                                       
-                          href={`/invoice/invoices/${inv.id}`}
-                          label="Edit"
-                          primary
-                        />                                                                                                                                                                
-                        <DeleteEntityButton
-                          id={inv.id}                                                                                                                                                     
-                          onDelete={deleteInvoice}
-                          confirmMessage="Delete this invoice? Remove payments and credit notes first."                                                                                   
-                          iconOnly                                                                                                                                                        
-                        />                                                                                                                                                                
-                      </div>                                                                                                                                                              
-                    </div>
-                  </article>
+                      </div>                                                                                                                                                                            
+                    </div>      
+                  </Link>
+                </article>
                 );                                                                                                                                                                        
               })}
             </div>                                                                                                                                                                        
