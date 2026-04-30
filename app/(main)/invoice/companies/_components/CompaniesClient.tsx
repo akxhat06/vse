@@ -59,13 +59,13 @@ export function CompaniesClient({ companies }: { companies: CompanyWithStats[] }
           )}
         </div>
 
-        {/* Count pill */}
-        {companies.length > 0 && (
+        {/* Filtered counter — only shown when searching */}
+        {query && companies.length > 0 && (
           <span
             className="hidden sm:inline-flex shrink-0 items-center rounded-full px-3 py-1.5 text-xs font-semibold"
             style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.45)" }}
           >
-            {query ? `${filtered.length} / ${companies.length}` : `${companies.length} ${companies.length === 1 ? "company" : "companies"}`}
+            {filtered.length} / {companies.length}
           </span>
         )}
       </div>
@@ -99,12 +99,6 @@ export function CompaniesClient({ companies }: { companies: CompanyWithStats[] }
         /* ── Card grid ── */
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((c) => {
-            const status = c.invoiceCount === 0 ? null
-              : c.outstanding === 0 ? "paid"
-              : c.totalPaid > 0 ? "partial"
-              : "unpaid";
-            const st = status ? STATUS[status] : null;
-
             return (
               <div
                 key={c.id}
@@ -119,63 +113,55 @@ export function CompaniesClient({ companies }: { companies: CompanyWithStats[] }
                 {/* Top accent line */}
                 <div className="h-0.5 w-full" style={{ background: "linear-gradient(90deg, rgba(129,140,248,0.6), rgba(167,139,250,0.3), transparent)" }} />
 
-                <div className="flex flex-1 flex-col gap-3 p-4">
+                <div className="flex flex-1 flex-col gap-2.5 p-3">
 
                   {/* ── Header row ── */}
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-3 min-w-0">
-                      {/* Avatar */}
-                      <div
-                        className="flex size-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold"
-                        style={{ background: "rgba(129,140,248,0.18)", color: "#a5b4fc", border: "1px solid rgba(129,140,248,0.25)" }}
-                      >
-                        {c.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-bold text-white truncate leading-tight">{c.name}</p>
-                        <p className="mt-0.5 text-[11px] font-mono truncate" style={{ color: "rgba(255,255,255,0.4)" }}>
-                          {c.gstNumber}
-                        </p>
-                      </div>
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    {/* Avatar */}
+                    <div
+                      className="flex size-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold"
+                      style={{ background: "rgba(129,140,248,0.18)", color: "#a5b4fc", border: "1px solid rgba(129,140,248,0.25)" }}
+                    >
+                      {c.name.charAt(0).toUpperCase()}
                     </div>
-
-                    {/* Status badge */}
-                    {st && (
-                      <span
-                        className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
-                        style={{ background: st.bg, color: st.color, border: `1px solid ${st.border}` }}
-                      >
-                        {st.label}
-                      </span>
-                    )}
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold leading-tight text-white truncate">{c.name}</p>
+                      <p className="mt-0.5 text-[10px] font-mono truncate" style={{ color: "rgba(255,255,255,0.4)" }}>
+                        {c.gstNumber}
+                      </p>
+                    </div>
                   </div>
 
-                  {/* ── Total billed ── */}
-                  <div
-                    className="flex items-center justify-between rounded-xl px-3 py-2.5"
-                    style={{ background: "rgba(129,140,248,0.08)", border: "1px solid rgba(129,140,248,0.15)" }}
-                  >
-                    <p className="text-[11px] font-semibold uppercase tracking-wide" style={{ color: "rgba(165,180,252,0.6)" }}>
-                      Total billed
-                    </p>
-                    <p className="text-base font-bold tabular-nums" style={{ color: c.invoiceCount > 0 ? "#a5b4fc" : "rgba(255,255,255,0.2)" }}>
-                      {c.invoiceCount > 0 ? formatInr(c.totalBilled) : "No invoices"}
-                    </p>
+                  {/* ── Inline stats: Invoices count + Total amount ── */}
+                  <div className="flex items-end justify-between gap-3 border-t pt-2.5" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "rgba(255,255,255,0.4)" }}>
+                        Invoices
+                      </p>
+                      <p className="text-base font-bold leading-tight tabular-nums" style={{ color: c.invoiceCount > 0 ? "#ffffff" : "rgba(255,255,255,0.3)" }}>
+                        {c.invoiceCount}
+                      </p>
+                    </div>
+                    <div className="min-w-0 text-right">
+                      <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "rgba(255,255,255,0.4)" }}>
+                        Total amount
+                      </p>
+                      <p className="truncate text-base font-bold leading-tight tabular-nums" style={{ color: c.invoiceCount > 0 ? "#a5b4fc" : "rgba(255,255,255,0.3)" }}>
+                        {c.invoiceCount > 0 ? formatInr(c.totalBilled) : "—"}
+                      </p>
+                    </div>
                   </div>
 
-                  {/* ── Footer row: meta + actions ── */}
+                  {/* ── Footer row: location + actions ── */}
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-3 text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>
-                      {/* Invoice count */}
-                      <span className="flex items-center gap-1">
-                        <InvoiceIcon className="size-3.5" />
-                        {c.invoiceCount} {c.invoiceCount === 1 ? "invoice" : "invoices"}
-                      </span>
-                      {/* Location */}
-                      {(c.city || c.state) && (
-                        <span className="truncate max-w-[100px]">
-                          {[c.city, c.state].filter(Boolean).join(", ")}
+                    <div className="flex items-center gap-2 min-w-0 text-[11px]" style={{ color: "rgba(255,255,255,0.35)" }}>
+                      {(c.city || c.state) ? (
+                        <span className="flex items-center gap-1 min-w-0">
+                          <PinIcon className="size-3 shrink-0" />
+                          <span className="truncate">{[c.city, c.state].filter(Boolean).join(", ")}</span>
                         </span>
+                      ) : (
+                        <span className="opacity-60">No location</span>
                       )}
                     </div>
 
@@ -183,7 +169,7 @@ export function CompaniesClient({ companies }: { companies: CompanyWithStats[] }
                     <div className="flex items-center gap-1.5 shrink-0">
                       <Link
                         href={`/invoice/companies/${c.id}`}
-                        className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition"
+                        className="flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold transition"
                         style={{ background: "rgba(129,140,248,0.12)", border: "1px solid rgba(129,140,248,0.2)", color: "#a5b4fc" }}
                         onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(129,140,248,0.22)"; }}
                         onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(129,140,248,0.12)"; }}
@@ -240,6 +226,6 @@ function BuildingIcon({ className, style }: { className?: string; style?: React.
 function EditIcon({ className }: { className?: string }) {
   return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>;
 }
-function InvoiceIcon({ className }: { className?: string }) {
-  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M8 4h8a2 2 0 0 1 2 2v14l-3-2-3 2-3-2-3 2V6a2 2 0 0 1 2-2Z" /><path d="M9 9h6M9 12h6M9 15h4" /></svg>;
+function PinIcon({ className }: { className?: string }) {
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13Z" /><circle cx="12" cy="9" r="2.5" /></svg>;
 }

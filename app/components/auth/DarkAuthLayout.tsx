@@ -1,72 +1,124 @@
-import type { ReactNode } from "react";
-import { AuthBubbles } from "@/app/components/auth/AuthBubbles";
+import Image from "next/image";  
+import app_icon from "@/public/app_icon.svg";
 
-type Props = {
+export function DarkAuthLayout({                                                                                                                                                        
+  kicker,                                                                                                                                                                               
+  title,                                                                                                                                                                                
+  children,                                                                                                                                                                             
+}: {                                                                                                                                                                                    
   kicker: string;
-  title: string;
-  children: ReactNode;
-};
-
-export function DarkAuthLayout({ kicker, title, children }: Props) {
-  return (
-    <div
-      className="relative min-h-dvh w-full overflow-x-hidden overflow-y-auto font-sans"
-      style={{
-        background: "#09090f",
-        backgroundImage:
-          "radial-gradient(ellipse 90% 60% at 15% -5%, rgba(99,102,241,0.22) 0%, transparent 55%), radial-gradient(ellipse 70% 50% at 85% 90%, rgba(139,92,246,0.16) 0%, transparent 55%)",
+  title: string;                                                                                                                                                                        
+  children: React.ReactNode;
+}) {                                                                                                                                                                                    
+  return (      
+    <main
+      className="relative min-h-dvh w-full overflow-hidden"
+      style={{                                                                                                                                                                          
+        background: "#0a0a0d",
+        paddingTop: "max(1rem, env(safe-area-inset-top))",                                                                                                                              
+        paddingBottom: "max(1rem, env(safe-area-inset-bottom))",                                                                                                                        
       }}
-    >
-      {/* Ambient blobs */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-        <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-indigo-600/20 blur-[90px]" />
-        <div className="absolute -right-20 top-10 h-80 w-80 rounded-full bg-violet-600/15 blur-[110px]" />
-        <div className="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-indigo-900/20 blur-[80px]" />
-      </div>
+    >                                                                                                                                                                                   
+      {/* Warm radial glow at top */}
+      <div                                                                                                                                                                              
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-[70vh]"                                                                                                               
+        style={{                                                                                                                                                                        
+          background:
+            "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(245,158,11,0.16), transparent 65%)",                                                                                       
+        }}                                                                                                                                                                              
+      />
+                                                                                                                                                                                        
+      {/* Top hairline accent */}                                                                                                                                                       
+      <div
+        aria-hidden                                                                                                                                                                     
+        className="pointer-events-none absolute inset-x-0 top-0 h-px"
+        style={{                                                                                                                                                                        
+          background:
+            "linear-gradient(90deg, transparent, rgba(245,158,11,0.45), transparent)",                                                                                                  
+        }}                                                                                                                                                                              
+      />
+                                                                                                                                                                                        
+      <div className="relative mx-auto flex min-h-dvh w-full max-w-[420px] flex-col px-6">                                                                                              
+        <div className="flex flex-1 flex-col justify-center py-6">                                                                                                                      
+          {/* Hero icon */}
+          <div className="mb-9 flex justify-center">                                                                                                                                    
+            <div className="relative">
+              <div                                                                                                                                                                      
+                aria-hidden
+                className="absolute inset-0 -z-10 scale-[2.6] rounded-full opacity-70 blur-2xl"                                                                                         
+                style={{                                                                                                                                                                
+                  background:
+                    "radial-gradient(circle, rgba(245,158,11,0.55) 0%, transparent 60%)",                                                                                               
+                }}
+              />                                                                                                                                                                        
+              <div
+                className="flex size-[72px] items-center justify-center rounded-2xl"                                                                                                    
+                style={{
+                  background:                                                                                                                                                           
+                    "linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02))",
+                  border: "1px solid rgba(255,255,255,0.1)",                                                                                                                            
+                  boxShadow:
+                    "inset 0 1px 0 rgba(255,255,255,0.08), 0 24px 48px -12px rgba(0,0,0,0.6)",                                                                                          
+                }}                                                                                                                                                                      
+              >
+                <Image                                                                                                                                                                  
+                  src={app_icon}
+                  alt=""                                                                                                                                                                
+                  width={40}
+                  height={40}                                                                                                                                                           
+                  priority
+                />
+              </div>
+            </div>
+          </div>                                                                                                                                                                        
 
-      {/* Rising bubbles */}
-      <AuthBubbles />
-
-      {/* Page */}
-      <div className="relative z-10 flex min-h-dvh flex-col items-center justify-center px-4 py-10 sm:px-6">
-
-        {/* Logo */}
-        <div className="mb-8">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/app_icon.svg"
-            alt="Vishwa Shree Enterprises"
-            style={{ height: 140, width: "auto", display: "block" }}
-          />
-        </div>
-
-        {/* Card */}
-        <div
-          className="w-full max-w-sm rounded-3xl px-6 py-8 sm:px-8"
-          style={{
-            background: "rgba(255,255,255,0.045)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            boxShadow: "0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)",
-          }}
-        >
-          {/* Heading */}
-          <div className="mb-7">
-            <p
-              className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.22em]"
-              style={{ color: "rgba(165,180,252,0.6)" }}
+          {/* Heading */}                                                                                                                                                               
+          <div className="mb-10 text-center">
+            <div className="mb-4 flex items-center justify-center gap-3">
+              <span                                                                                                                                                                     
+                aria-hidden
+                className="h-px w-7"                                                                                                                                                    
+                style={{ background: "rgba(245,158,11,0.45)" }}                                                                                                                         
+              />
+              <p                                                                                                                                                                        
+                className="text-[10px] uppercase tracking-[0.3em]"
+                style={{                                                                                                                                                                
+                  fontFamily: "var(--font-mono)",
+                  color: "rgba(245,158,11,0.78)",                                                                                                                                       
+                }}                                                                                                                                                                      
+              >
+                {kicker}                                                                                                                                                                
+              </p>
+              <span
+                aria-hidden
+                className="h-px w-7"
+                style={{ background: "rgba(245,158,11,0.45)" }}
+              />                                                                                                                                                                        
+            </div>
+            <h1                                                                                                                                                                         
+              className="text-[38px] leading-[1.05] tracking-tight text-white"
+              style={{ fontFamily: "var(--font-display)", fontWeight: 400 }}                                                                                                            
             >
-              {kicker}
-            </p>
-            <h1 className="text-2xl font-bold tracking-tight text-white">
-              {title}
+              {title}                                                                                                                                                                   
             </h1>
-          </div>
+          </div>                                                                                                                                                                        
 
-          {children}
-        </div>
+          {children}                                                                                                                                                                    
+        </div>  
+
+        <footer className="py-5 text-center">
+          <p
+            className="text-[9px] uppercase tracking-[0.3em]"
+            style={{                                                                                                                                                                    
+              fontFamily: "var(--font-mono)",
+              color: "rgba(255,255,255,0.22)",                                                                                                                                          
+            }}                                                                                                                                                                          
+          >
+            secured · encrypted · audited                                                                                                                                               
+          </p>  
+        </footer>
       </div>
-    </div>
+    </main>
   );
 }

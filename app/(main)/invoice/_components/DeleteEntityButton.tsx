@@ -63,7 +63,7 @@ export function DeleteEntityButton({
   return (
     <button
       type="button"
-      className="rounded-lg px-3 py-1.5 text-xs font-medium transition"
+      className="rounded-xl border border-red-400/25 bg-red-400/10 px-4 py-2 text-sm font-medium text-red-300 transition-colors hover:bg-red-400/20"
       style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)", color: "rgba(248,113,113,0.75)" }}
       onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(248,113,113,0.15)"; }}
       onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(248,113,113,0.08)"; }}
