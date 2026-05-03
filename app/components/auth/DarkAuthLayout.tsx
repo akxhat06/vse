@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { AuthBubbles } from "./AuthBubbles";
 
 const INDIGO = "#818cf8";
 const VIOLET = "#a78bfa";
@@ -21,10 +22,12 @@ export function DarkAuthLayout({
         paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
       }}
     >
+      <AuthBubbles />
+
       {/* Indigo radial glow at top */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-[70vh]"
+        className="auth-bg-glow-top pointer-events-none absolute inset-x-0 top-0 h-[70vh]"
         style={{
           background:
             "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(129,140,248,0.18), transparent 65%)",
@@ -34,7 +37,7 @@ export function DarkAuthLayout({
       {/* Violet glow bottom-right */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-32 -right-20 h-[60vh] w-[60vw]"
+        className="auth-bg-glow-br pointer-events-none absolute -bottom-32 -right-20 h-[60vh] w-[60vw]"
         style={{
           background:
             "radial-gradient(ellipse, rgba(167,139,250,0.12), transparent 65%)",
@@ -44,14 +47,14 @@ export function DarkAuthLayout({
       {/* Top hairline accent */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px"
+        className="auth-bg-hairline pointer-events-none absolute inset-x-0 top-0 h-px"
         style={{
           background:
             "linear-gradient(90deg, transparent, rgba(129,140,248,0.45), transparent)",
         }}
       />
 
-      <div className="relative mx-auto flex min-h-dvh w-full max-w-[420px] flex-col px-6">
+      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-[420px] flex-col px-6">
         <div className="flex flex-1 flex-col justify-center py-6">
           {/* Hero icon */}
           <div className="mb-7 flex justify-center">

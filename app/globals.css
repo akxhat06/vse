@@ -196,8 +196,73 @@
   will-change: transform, opacity;
 }
 
+/* Slow drift on auth gradient orbs */
+@keyframes auth-glow-drift {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    opacity: 0.88;
+    transform: translate(3%, 2%) scale(1.03);
+  }
+  66% {
+    opacity: 0.95;
+    transform: translate(-2%, 1%) scale(0.98);
+  }
+}
+
+@keyframes auth-glow-drift-alt {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  40% {
+    opacity: 0.82;
+    transform: translate(-4%, -3%) scale(1.06) rotate(-2deg);
+  }
+  70% {
+    opacity: 0.92;
+    transform: translate(2%, -2%) scale(1.02) rotate(1deg);
+  }
+}
+
+.auth-bg-glow-top {
+  animation: auth-glow-drift 22s ease-in-out infinite;
+}
+
+.auth-bg-glow-br {
+  animation: auth-glow-drift-alt 28s ease-in-out infinite reverse;
+}
+
+@keyframes auth-hairline-shimmer {
+  0%,
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.65;
+    filter: brightness(1.35);
+  }
+}
+
+.auth-bg-hairline {
+  animation: auth-hairline-shimmer 8s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .auth-bubble { animation: none !important; opacity: 0 !important; }
+  .auth-bubble {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+  .auth-bg-glow-top,
+  .auth-bg-glow-br,
+  .auth-bg-hairline {
+    animation: none !important;
+  }
 }
 
 /* Primary QA card — reveal inset glow on hover */
