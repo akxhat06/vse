@@ -1,380 +1,423 @@
-"use client";                                                                                                                                                                           
-                  
+"use client";
+
+import {
+  ArrowRight,
+  FileText,
+  Plus,
+  Receipt,
+  Search,
+  Undo2,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { RetailerForm } from "@/app/(main)/invoice/_components/RetailerForm";
-import type { Company, Retailer } from "@/lib/store/types";                                                                                                                             
-                                                                                                                                                                                        
-const AMBER = "rgb(245,158,11)";                                                                                                                                                        
-const MONO = "var(--font-mono)";                                                                                                                                                        
-const DISPLAY = "var(--font-display)";                                                                                                                                                  
-                
-const inr = new Intl.NumberFormat("en-IN", {                                                                                                                                            
+import type { Company, Retailer } from "@/lib/store/types";
+
+const INDIGO = "#818cf8";
+const VIOLET = "#a78bfa";
+const EMERALD = "#34d399";
+const SKY = "#38bdf8";
+
+const inr = new Intl.NumberFormat("en-IN", {
   style: "currency",
-  currency: "INR",                                                                                                                                                                      
+  currency: "INR",
   minimumFractionDigits: 0,
   maximumFractionDigits: 0,
-});                                                                                                                                                                                     
- 
-type AnyInvoice = {                                                                                                                                                                     
-  id: string;   
+});
+
+type AnyInvoice = {
+  id: string;
   invoiceNumber?: string;
-  date?: string;                                                                                                                                                                        
+  date?: string;
   invoiceAmount: number;
-};                                                                                                                                                                                      
+};
 type AnyPayment = {
   id: string;
   date?: string;
   amount: number;
-};                                                                                                                                                                                      
+};
 type AnyCreditNote = {
-  id: string;                                                                                                                                                                           
+  id: string;
   date?: string;
   amount: number;
   noteNumber?: string;
-};                                                                                                                                                                                      
- 
-const TABS = [                                                                                                                                                                          
-  { id: "retailer", label: "Retailer", index: "01" },
-  { id: "invoices", label: "Invoices", index: "02" },                                                                                                                                   
-  { id: "credit",   label: "Credit",   index: "03" },
-  { id: "payments", label: "Payments", index: "04" },                                                                                                                                   
-] as const;     
-                                                                                                                                                                                        
+};
+
+const TABS = [
+  { id: "retailer", label: "Retailer", color: INDIGO },
+  { id: "invoices", label: "Invoices", color: VIOLET },
+  { id: "credit", label: "Credit", color: SKY },
+  { id: "payments", label: "Payments", color: EMERALD },
+] as const;
+
 type TabId = (typeof TABS)[number]["id"];
 
-export function EditRetailerClient({                                                                                                                                                    
+export function EditRetailerClient({
   retailer,
-  companies,                                                                                                                                                                            
-  redirectTo,   
+  companies,
+  redirectTo,
   invoices,
   payments,
   creditNotes,
 }: {
   retailer: Retailer;
   companies: Company[];
-  redirectTo: string;                                                                                                                                                                   
+  redirectTo: string;
   invoices: AnyInvoice[];
-  payments: AnyPayment[];                                                                                                                                                               
+  payments: AnyPayment[];
   creditNotes: AnyCreditNote[];
-}) {                                                                                                                                                                                    
+}) {
   const [active, setActive] = useState<TabId>("retailer");
-                                                                                                                                                                                        
+
   const counts: Record<TabId, number> = {
     retailer: 0,
-    invoices: invoices.length,                                                                                                                                                          
+    invoices: invoices.length,
     credit: creditNotes.length,
-    payments: payments.length,                                                                                                                                                          
-  };            
+    payments: payments.length,
+  };
 
-  return (                                                                                                                                                                              
-    <div className="mx-auto max-w-3xl space-y-6 pb-6">
-      {/* Back */}                                                                                                                                                                      
-      <Link     
+  return (
+    <div className="mx-auto max-w-3xl space-y-5 px-1 pb-6">
+      {/* Back */}
+      <Link
         href="/invoice/retailers"
-        className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] transition active:opacity-70"                                                               
-        style={{ fontFamily: MONO, color: "rgba(255,255,255,0.5)" }}
-      >                                                                                                                                                                                 
-        <span style={{ color: AMBER }}>←</span>
-        <span>Retailers</span>                                                                                                                                                          
-      </Link>                                                                                                                                                                           
- 
-      {/* Heading */}                                                                                                                                                                   
-      <header>  
-        <p
-          className="text-[10px] uppercase tracking-[0.3em]"
-          style={{ fontFamily: MONO, color: AMBER }}
-        >                                                                                                                                                                               
-          Update entry
-        </p>                                                                                                                                                                            
-        <h1     
-          className="mt-1 text-[28px] leading-none text-white"
-          style={{
-            fontFamily: DISPLAY,                                                                                                                                                        
-            fontWeight: 400,
-            letterSpacing: "-0.01em",                                                                                                                                                   
-          }}    
-        >
-          {retailer.name}
-        </h1>
-      </header>                                                                                                                                                                         
- 
-     {/* Tab strip — single row */}                                                                                                                                                          
-  <div                                                                                                                                                                                    
-    className="grid grid-cols-4"                                                                                                                                                          
-    style={{                                                                                                                                                                              
-      borderBottom: "1px solid rgba(255,255,255,0.08)",
-    }}
-  >
-    {TABS.map((t) => {                                                                                                                                                                    
-      const isActive = active === t.id;
-      const count = counts[t.id];                                                                                                                                                         
-      const showCount = t.id !== "retailer";
-      return (                                                                                                                                                                            
-        <button
-          key={t.id}                                                                                                                                                                      
-          type="button"
-          onClick={() => setActive(t.id)}
-          className="relative flex items-baseline justify-center gap-1.5 py-3 transition-opacity active:opacity-60"                                                                       
-          aria-current={isActive ? "page" : undefined}
-          style={{                                                                                                                                                                        
-            fontFamily: MONO,
-            color: isActive ? AMBER : "rgba(255,255,255,0.45)",                                                                                                                           
-          }}                                                                                                                                                                              
-        >
-          <span className="text-[10px] uppercase tracking-[0.22em]">                                                                                                                      
-            {t.label}
-          </span>
-          {showCount && (
-            <span
-              className="text-[9px] tabular-nums"
-              style={{                                                                                                                                                                    
-                color: isActive
-                  ? AMBER                                                                                                                                                                 
-                  : "rgba(255,255,255,0.3)",
-              }}                                                                                                                                                                          
-            >
-              {String(count).padStart(2, "0")}                                                                                                                                            
-            </span>
-          )}
-          {isActive && (
-            <>
-              <span                                                                                                                                                                       
-                aria-hidden
-                className="pointer-events-none absolute inset-x-4 -bottom-px h-px"                                                                                                        
-                style={{
-                  background: AMBER,
-                  boxShadow: `0 0 8px ${AMBER}`,                                                                                                                                          
-                }}
-              />                                                                                                                                                                          
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-x-0 inset-y-0 -z-0"
-                style={{                                                                                                                                                                  
-                  background:
-                    "linear-gradient(180deg, rgba(245,158,11,0.06), transparent 75%)",                                                                                                    
-                }}                                                                                                                                                                        
-              />                                                                                                                                                                          
-            </>                                                                                                                                                                           
-          )}                                                                                                                                                                              
-        </button> 
-      );
-    })}
-  </div>
+        className="inline-flex items-center gap-1 text-[12px] font-semibold transition active:opacity-70"
+        style={{ color: "rgba(255,255,255,0.55)" }}
+      >
+        <ArrowRight
+          className="size-3.5 rotate-180"
+          style={{ color: EMERALD }}
+        />
+        Retailers
+      </Link>
 
-      {/* ── Tab content ── */}                                                                                                                                                         
+      {/* Heading */}
+      <header className="flex items-center gap-3">
+        <div
+          className="flex size-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold text-white"
+          style={{
+            background: `linear-gradient(135deg, ${INDIGO}, ${VIOLET})`,
+            boxShadow: `0 4px 14px ${INDIGO}40`,
+          }}
+        >
+          {retailer.name.charAt(0).toUpperCase()}
+        </div>
+        <div className="min-w-0">
+          <p className="text-[11px] text-white/40">Update entry</p>
+          <h1 className="truncate text-xl font-bold leading-tight text-white">
+            {retailer.name}
+          </h1>
+        </div>
+      </header>
+
+      {/* Tab strip */}
+      <div
+        className="grid grid-cols-4 rounded-xl p-1"
+        style={{
+          background: "rgba(255,255,255,0.04)",
+          border: "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
+        {TABS.map((t) => {
+          const isActive = active === t.id;
+          const count = counts[t.id];
+          const showCount = t.id !== "retailer";
+          return (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setActive(t.id)}
+              className="relative flex items-center justify-center gap-1.5 rounded-lg py-2 text-[11px] font-bold transition active:scale-[0.97]"
+              aria-current={isActive ? "page" : undefined}
+              style={
+                isActive
+                  ? {
+                      background: `linear-gradient(135deg, ${t.color}22, ${t.color}11)`,
+                      color: t.color,
+                      border: `1px solid ${t.color}33`,
+                      boxShadow: `0 4px 12px ${t.color}25`,
+                    }
+                  : { color: "rgba(255,255,255,0.5)" }
+              }
+            >
+              <span>{t.label}</span>
+              {showCount && (
+                <span className="text-[9px] tabular-nums opacity-70">
+                  {String(count).padStart(2, "0")}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Tab content */}
       {active === "retailer" && (
-        <RetailerForm                                                                                                                                                                   
+        <RetailerForm
           companies={companies}
           initial={retailer}
           redirectTo={redirectTo}
         />
       )}
-                                                                                                                                                                                        
+
       {active === "invoices" && (
-        <RelatedList                                                                                                                                                                    
+        <RelatedList
           title="Invoices"
+          color={VIOLET}
+          Icon={FileText}
+          searchable
+          searchPlaceholder="Search by invoice no…"
           items={invoices.map((i) => ({
-            id: i.id,                                                                                                                                                                   
+            id: i.id,
             label: i.invoiceNumber
-              ? `Inv #${i.invoiceNumber}`                                                                                                                                               
-              : `Invoice`,                                                                                                                                                              
+              ? `Inv #${i.invoiceNumber}`
+              : `Invoice`,
             sub: i.date,
-            amount: i.invoiceAmount,                                                                                                                                                    
-          }))}  
+            amount: i.invoiceAmount,
+            search: i.invoiceNumber ?? "",
+          }))}
           emptyText="No invoices for this retailer."
-          openHref={(id) =>
-            `/invoice/invoices/${id}?returnTo=${encodeURIComponent(`/invoice/retailers/${retailer.id}`)}`
-          }
-          newHref={`/invoice/invoices/new?retailerId=${retailer.id}&returnTo=${encodeURIComponent(`/invoice/retailers/${retailer.id}`)}`}                                               
-          newLabel="New invoice"                                                                                                                                                        
-        />                                                                                                                                                                              
-      )}                                                                                                                                                                                
-                
+          openHref={(id) => `/invoice/invoices/${id}`}
+          newHref={`/invoice/invoices/new?retailerId=${retailer.id}&returnTo=${encodeURIComponent(`/invoice/retailers/${retailer.id}`)}`}
+          newLabel="New invoice"
+        />
+      )}
+
       {active === "credit" && (
         <RelatedList
           title="Credit notes"
-          items={creditNotes.map((cn) => ({                                                                                                                                             
+          color={SKY}
+          Icon={Undo2}
+          items={creditNotes.map((cn) => ({
             id: cn.id,
-            label: cn.noteNumber ? `CN #${cn.noteNumber}` : "Credit note",                                                                                                              
-            sub: cn.date,                                                                                                                                                               
+            label: cn.noteNumber
+              ? `CN #${cn.noteNumber}`
+              : "Credit note",
+            sub: cn.date,
             amount: cn.amount,
-          }))}                                                                                                                                                                          
+          }))}
           emptyText="No credit notes for this retailer."
-          openHref={(id) => `/invoice/credit-notes/${id}`}                                                                                                                              
+          openHref={(id) => `/invoice/credit-notes/${id}`}
           newHref={`/invoice/credit-notes/new?retailerId=${retailer.id}&returnTo=${encodeURIComponent(`/invoice/retailers/${retailer.id}`)}`}
-          newLabel="New credit note"                                                                                                                                                    
-        />      
-      )}                                                                                                                                                                                
-                
-      {active === "payments" && (                                                                                                                                                       
+          newLabel="New credit note"
+        />
+      )}
+
+      {active === "payments" && (
         <RelatedList
-          title="Payments"                                                                                                                                                              
+          title="Payments"
+          color={EMERALD}
+          Icon={Receipt}
           items={payments.map((p) => ({
             id: p.id,
             label: "Payment",
             sub: p.date,
             amount: p.amount,
-          }))}                                                                                                                                                                          
+          }))}
           emptyText="No payments recorded."
-          openHref={(id) => `/invoice/payments/${id}`}                                                                                                                                  
+          openHref={(id) => `/invoice/payments/${id}`}
           newHref={`/invoice/payments/new?retailerId=${retailer.id}&returnTo=${encodeURIComponent(`/invoice/retailers/${retailer.id}`)}`}
-          newLabel="Record payment"                                                                                                                                                     
-        />                                                                                                                                                                              
-      )}                                                                                                                                                                                
-    </div>                                                                                                                                                                              
-  );            
+          newLabel="Record payment"
+        />
+      )}
+    </div>
+  );
 }
 
-/* ── Related list (used for invoices / credit notes / payments) ── */                                                                                                                  
 type ListItem = {
-  id: string;                                                                                                                                                                           
+  id: string;
   label: string;
   sub?: string;
-  amount: number;                                                                                                                                                                       
+  amount: number;
+  search?: string;
 };
-                                                                                                                                                                                        
+
+type IconType = React.ComponentType<{
+  className?: string;
+  style?: React.CSSProperties;
+}>;
+
 function RelatedList({
   title,
+  color,
+  Icon,
   items,
   emptyText,
   openHref,
   newHref,
   newLabel,
+  searchable,
+  searchPlaceholder,
 }: {
   title: string;
+  color: string;
+  Icon: IconType;
   items: ListItem[];
-  emptyText: string;                                                                                                                                                                    
+  emptyText: string;
   openHref: (id: string) => string;
-  newHref: string;                                                                                                                                                                      
+  newHref: string;
   newLabel: string;
+  searchable?: boolean;
+  searchPlaceholder?: string;
 }) {
-  const total = items.reduce((s, x) => s + x.amount, 0);
-                                                                                                                                                                                        
+  const [query, setQuery] = useState("");
+  const filtered = items.filter((x) => {
+    if (!query.trim()) return true;
+    const q = query.toLowerCase().trim();
+    return (
+      (x.search ?? x.label).toLowerCase().includes(q) ||
+      x.label.toLowerCase().includes(q)
+    );
+  });
+  const total = filtered.reduce((s, x) => s + x.amount, 0);
+
   return (
-    <section className="space-y-4">                                                                                                                                                     
-      {/* Header + add */}
-      <div className="flex items-baseline justify-between">                                                                                                                             
-        <p
-          className="text-[10px] uppercase tracking-[0.3em]"                                                                                                                            
-          style={{                                                                                                                                                                      
-            fontFamily: MONO,
-            color: "rgba(255,255,255,0.55)",                                                                                                                                            
-          }}    
-        >
-          {title}                                                                                                                                                                       
+    <section className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="flex items-center gap-2 text-[13px] font-bold text-white">
+          <Icon className="size-3.5" style={{ color }} />
+          {title}
         </p>
-        <Link                                                                                                                                                                           
+        <Link
           href={newHref}
-          className="inline-flex items-center gap-1.5 px-2 py-1 text-[10px] uppercase tracking-[0.22em] transition active:opacity-70"
-          style={{ fontFamily: MONO, color: AMBER }}                                                                                                                                    
+          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-bold transition active:opacity-70"
+          style={{
+            color,
+            background: `${color}1f`,
+            border: `1px solid ${color}33`,
+          }}
         >
-          + {newLabel}                                                                                                                                                                  
-        </Link> 
-      </div>                                                                                                                                                                            
-                
+          <Plus className="size-3" /> {newLabel}
+        </Link>
+      </div>
+
+      {searchable && items.length > 0 && (
+        <div
+          className="relative flex items-center gap-2 rounded-xl px-3 py-2"
+          style={{
+            background: "rgba(255,255,255,0.04)",
+            border: "1px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          <Search className="size-3.5 shrink-0 text-white/35" />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={searchPlaceholder ?? "Search…"}
+            className="min-w-0 flex-1 bg-transparent text-[12px] text-white outline-none placeholder:text-white/30"
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              className="shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold text-white/55 transition hover:bg-white/5"
+            >
+              clear
+            </button>
+          )}
+        </div>
+      )}
+
       {items.length === 0 ? (
         <div
-          className="px-4 py-8 text-center"
-          style={{ border: "1px dashed rgba(255,255,255,0.1)" }}                                                                                                                        
+          className="rounded-xl px-4 py-8 text-center"
+          style={{
+            background: "rgba(255,255,255,0.02)",
+            border: "1px dashed rgba(255,255,255,0.08)",
+          }}
         >
-          <p                                                                                                                                                                            
-            className="text-[10px] uppercase tracking-[0.25em]"
-            style={{                                                                                                                                                                    
-              fontFamily: MONO,
-              color: "rgba(255,255,255,0.4)",                                                                                                                                           
-            }}  
-          >
-            {emptyText}
+          <p className="text-[11px] text-white/40">{emptyText}</p>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div
+          className="rounded-xl px-4 py-6 text-center"
+          style={{
+            background: "rgba(255,255,255,0.02)",
+            border: "1px solid rgba(255,255,255,0.06)",
+          }}
+        >
+          <p className="text-[11px] text-white/40">
+            No results for &ldquo;
+            <span className="text-white/75">{query}</span>&rdquo;
           </p>
-        </div>                                                                                                                                                                          
+        </div>
       ) : (
-        <>                                                                                                                                                                              
-          {/* Subtotal */}
+        <>
+          {/* Subtotal pill */}
           <div
-            className="flex items-baseline justify-between gap-4 py-2"
-            style={{                                                                                                                                                                    
-              borderTop: "1px solid rgba(255,255,255,0.08)",
-              borderBottom: "1px solid rgba(255,255,255,0.08)",                                                                                                                         
-            }}  
-          >                                                                                                                                                                             
-            <span                                                                                                                                                                       
-              className="text-[9px] uppercase tracking-[0.25em]"
-              style={{                                                                                                                                                                  
-                fontFamily: MONO,
-                color: "rgba(255,255,255,0.4)",
-              }}                                                                                                                                                                        
-            >
-              {String(items.length).padStart(2, "0")} {title.toLowerCase()}                                                                                                             
-            </span>                                                                                                                                                                     
+            className="flex items-center justify-between gap-2 rounded-xl px-3 py-2"
+            style={{
+              background: `linear-gradient(135deg, ${color}14, ${color}05)`,
+              border: "1px solid rgba(255,255,255,0.06)",
+            }}
+          >
+            <span className="text-[11px] text-white/55">
+              <span
+                className="font-bold tabular-nums"
+                style={{ color }}
+              >
+                {String(filtered.length).padStart(2, "0")}
+              </span>
+              {query && (
+                <span className="text-white/35">
+                  {" "}
+                  / {items.length}
+                </span>
+              )}{" "}
+              {title.toLowerCase()}
+            </span>
             <span
-              className="text-[13px] tabular-nums"                                                                                                                                      
-              style={{ fontFamily: MONO, color: AMBER }}
-            >                                                                                                                                                                           
+              className="text-[12px] font-bold tabular-nums"
+              style={{ color }}
+            >
               {inr.format(total)}
-            </span>                                                                                                                                                                     
+            </span>
           </div>
 
-          {/* Rows */}
-          <ul style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-            {items.map((item, i) => (                                                                                                                                                   
+          <ul className="space-y-2">
+            {filtered.map((item) => (
               <li
-                key={item.id}                                                                                                                                                           
-                style={{                                                                                                                                                                
-                  borderBottom: "1px solid rgba(255,255,255,0.06)",
-                }}                                                                                                                                                                      
-              > 
+                key={item.id}
+                className="rounded-xl"
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                }}
+              >
                 <Link
                   href={openHref(item.id)}
-                  className="flex items-baseline justify-between gap-3 py-3 transition-opacity active:opacity-70"                                                                       
-                >                                                                                                                                                                       
-                  <div className="flex min-w-0 items-baseline gap-3">                                                                                                                   
-                    <span                                                                                                                                                               
-                      className="w-6 shrink-0 text-[10px] tabular-nums"
-                      style={{                                                                                                                                                          
-                        fontFamily: MONO,                                                                                                                                               
-                        color: "rgba(255,255,255,0.3)",
-                      }}                                                                                                                                                                
-                    >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>                                                                                                                                                             
-                    <div className="min-w-0">
-                      <p className="truncate text-[13px] text-white">                                                                                                                   
-                        {item.label}                                                                                                                                                    
+                  className="flex items-center justify-between gap-3 px-3 py-2.5 transition active:opacity-70"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-[13px] font-semibold text-white">
+                      {item.label}
+                    </p>
+                    {item.sub && (
+                      <p className="mt-0.5 text-[10px] text-white/40">
+                        {item.sub}
                       </p>
-                      {item.sub && (                                                                                                                                                    
-                        <p
-                          className="mt-0.5 text-[10px] uppercase tracking-[0.18em]"
-                          style={{                                                                                                                                                      
-                            fontFamily: MONO,
-                            color: "rgba(255,255,255,0.4)",                                                                                                                             
-                          }}
-                        >
-                          {item.sub}
-                        </p>                                                                                                                                                            
-                      )}
-                    </div>                                                                                                                                                              
+                    )}
                   </div>
-                  <div className="flex items-baseline gap-3">
+                  <div className="flex items-center gap-2">
                     <span
-                      className="text-[13px] tabular-nums"                                                                                                                              
-                      style={{ fontFamily: MONO, color: AMBER }}
-                    >                                                                                                                                                                   
+                      className="text-[13px] font-bold tabular-nums"
+                      style={{ color }}
+                    >
                       {inr.format(item.amount)}
                     </span>
-                    <span                                                                                                                                                               
-                      className="text-[12px]"
-                      style={{ color: AMBER, opacity: 0.5 }}                                                                                                                            
-                    >                                                                                                                                                                   
-                      →
-                    </span>                                                                                                                                                             
+                    <ArrowRight
+                      className="size-3.5"
+                      style={{ color, opacity: 0.5 }}
+                    />
                   </div>
                 </Link>
               </li>
             ))}
           </ul>
-        </>                                                                                                                                                                             
+        </>
       )}
-    </section>                                                                                                                                                                          
-  );            
+    </section>
+  );
 }
+

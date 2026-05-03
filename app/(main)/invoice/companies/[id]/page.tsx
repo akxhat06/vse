@@ -1,15 +1,26 @@
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CompanyForm } from "@/app/(main)/invoice/_components/CompanyForm";
+import { DeleteEntityButton } from "@/app/(main)/invoice/_components/DeleteEntityButton";
 import { safePostSaveRedirect } from "@/app/(main)/invoice/redirect-utils";
-import { getStore } from "@/app/(main)/invoice/store-actions";
+import {
+  deleteCompany,
+  getStore,
+} from "@/app/(main)/invoice/store-actions";
+
+const SKY = "#38bdf8";
+const INDIGO = "#818cf8";
 
 type Props = {
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ returnTo?: string }>;
 };
 
-export default async function EditCompanyPage({ params, searchParams }: Props) {
+export default async function EditCompanyPage({
+  params,
+  searchParams,
+}: Props) {
   const { id } = await params;
   const sp = (await searchParams) ?? {};
   const redirectTo = safePostSaveRedirect(
@@ -21,44 +32,43 @@ export default async function EditCompanyPage({ params, searchParams }: Props) {
   if (!company) notFound();
 
   return (
-    <div className="max-w-2xl space-y-5">
-      <div>
-        <Link
-          href="/invoice/companies"
-          className="hover-back inline-flex items-center gap-1 text-sm transition-colors"
-          style={{ color: "rgba(255,255,255,0.4)" }}
-        >
-          <ChevronLeft className="size-4" /> Companies
-        </Link>
-        <div className="mt-2 flex items-center gap-3">
+    <div className="mx-auto max-w-2xl space-y-5 px-1 pb-6">
+      <Link
+        href="/invoice/companies"
+        className="inline-flex items-center gap-1 text-[12px] font-semibold transition active:opacity-70"
+        style={{ color: "rgba(255,255,255,0.55)" }}
+      >
+        <ChevronLeft className="size-3.5" style={{ color: SKY }} />
+        Companies
+      </Link>
+
+      <header className="flex items-end justify-between gap-3">
+        <div className="flex items-center gap-3">
           <div
-            className="flex size-9 items-center justify-center rounded-full text-sm font-bold"
+            className="flex size-10 items-center justify-center rounded-xl text-sm font-bold text-white"
             style={{
-              background: "rgba(129,140,248,0.2)",
-              color: "#a5b4fc",
-              border: "1px solid rgba(129,140,248,0.25)",
+              background: `linear-gradient(135deg, ${SKY}, ${INDIGO})`,
+              boxShadow: `0 4px 14px ${SKY}40`,
             }}
           >
             {company.name.charAt(0).toUpperCase()}
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-white">{company.name}</h1>
-            <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>Edit company details</p>
+          <div className="min-w-0">
+            <p className="text-[11px] text-white/40">Update entry</p>
+            <h1 className="truncate text-xl font-bold leading-tight text-white">
+              {company.name}
+            </h1>
           </div>
         </div>
-      </div>
 
-      <div className="glass rounded-2xl p-6">
-        <CompanyForm initial={company} redirectTo={redirectTo} />
-      </div>
+        <DeleteEntityButton
+          id={company.id}
+          onDelete={deleteCompany}
+          confirmMessage="Delete this company? Retailers and invoices must be removed first."
+        />
+      </header>
+
+      <CompanyForm initial={company} redirectTo={redirectTo} />
     </div>
-  );
-}
-
-function ChevronLeft({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="m15 18-6-6 6-6" />
-    </svg>
   );
 }

@@ -1,6 +1,10 @@
+import { Building2, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { CompanyForm } from "@/app/(main)/invoice/_components/CompanyForm";
 import { safePostSaveRedirect } from "@/app/(main)/invoice/redirect-utils";
+
+const SKY = "#38bdf8";
+const INDIGO = "#818cf8";
 
 type Props = { searchParams?: Promise<{ returnTo?: string }> };
 
@@ -12,32 +16,35 @@ export default async function NewCompanyPage({ searchParams }: Props) {
   );
 
   return (
-    <div className="max-w-2xl space-y-5">
-      <div>
-        <Link
-          href="/invoice/companies"
-          className="hover-back inline-flex items-center gap-1 text-sm transition-colors"
-          style={{ color: "rgba(255,255,255,0.4)" }}
+    <div className="mx-auto max-w-2xl space-y-5 px-1 pb-6">
+      <Link
+        href="/invoice/companies"
+        className="inline-flex items-center gap-1 text-[12px] font-semibold transition active:opacity-70"
+        style={{ color: "rgba(255,255,255,0.55)" }}
+      >
+        <ChevronLeft className="size-3.5" style={{ color: SKY }} />
+        Companies
+      </Link>
+
+      <header className="flex items-center gap-3">
+        <div
+          className="flex size-10 items-center justify-center rounded-xl"
+          style={{
+            background: `linear-gradient(135deg, ${SKY}, ${INDIGO})`,
+            boxShadow: `0 4px 14px ${SKY}40`,
+          }}
         >
-          <ChevronLeft className="size-4" /> Companies
-        </Link>
-        <h1 className="mt-2 text-xl font-bold text-white">New company</h1>
-        <p className="mt-0.5 text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
-          Fill in the details below to add a new company.
-        </p>
-      </div>
+          <Building2 className="size-5 text-white" />
+        </div>
+        <div>
+          <p className="text-[11px] text-white/40">New entry</p>
+          <h1 className="text-xl font-bold leading-tight text-white">
+            Add company
+          </h1>
+        </div>
+      </header>
 
-      <div className="glass rounded-2xl p-6">
-        <CompanyForm initial={null} redirectTo={redirectTo} />
-      </div>
+      <CompanyForm initial={null} redirectTo={redirectTo} />
     </div>
-  );
-}
-
-function ChevronLeft({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="m15 18-6-6 6-6" />
-    </svg>
   );
 }

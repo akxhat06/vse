@@ -1,334 +1,227 @@
 "use client";
 
-  import Link from "next/link";                                                                                                                                                           
-  import { useState } from "react";
-  import { RetailerCard } from "@/app/(main)/invoice/_components/RetailerCard";                                                                                                           
-  import type { EnrichedRetailer } from "./page";                                                                                                                                         
-   
-  const AMBER = "rgb(245,158,11)";                                                                                                                                                        
-  const MONO = "var(--font-mono)";
-  const DISPLAY = "var(--font-display)";                                                                                                                                                  
-                                                                                                                                                                                          
-  const inr = new Intl.NumberFormat("en-IN", {
-    style: "currency",                                                                                                                                                                    
-    currency: "INR",
-    minimumFractionDigits: 0,                                                                                                                                                             
-    maximumFractionDigits: 0,
-  });                                                                                                                                                                                     
-                  
-  export function RetailersClient({
-    retailers,
-    hasCompanies,
-  }: {
-    retailers: EnrichedRetailer[];                                                                                                                                                        
-    hasCompanies: boolean;
-  }) {                                                                                                                                                                                    
-    const [query, setQuery] = useState("");
+import { Plus, Search, Store } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { RetailerCard } from "@/app/(main)/invoice/_components/RetailerCard";
+import type { EnrichedRetailer } from "./page";
 
-    const filtered = retailers.filter((r) => {                                                                                                                                            
-      const q = query.toLowerCase().trim();
-      if (!q) return true;                                                                                                                                                                
-      return (    
-        r.name.toLowerCase().includes(q) ||
-        (r.companyName ?? "").toLowerCase().includes(q) ||                                                                                                                                
-        r.taxId.toLowerCase().includes(q) ||
-        r.phone.includes(q)                                                                                                                                                               
-      );                                                                                                                                                                                  
-    });
-                                                                                                                                                                                          
-    const totalBillsAll = filtered.reduce(
-      (s, r) => s + r.invoiceCount,
-      0,                                                                                                                                                                                  
-    );
-    const totalBilledAll = filtered.reduce(                                                                                                                                               
-      (s, r) => s + r.totalBilled,
-      0,
-    );                                                                                                                                                                                    
-   
-    return (                                                                                                                                                                              
-      <div className="mx-auto max-w-5xl space-y-6 pb-28 pt-1 lg:pb-6">
-        {/* Header */}                                                                                                                                                                    
-        <header className="flex items-baseline justify-between gap-4">
-          <div>                                                                                                                                                                           
-            <p    
-              className="text-[10px] uppercase tracking-[0.3em]"                                                                                                                          
-              style={{                                                                                                                                                                    
-                fontFamily: MONO,
-                color: "rgba(255,255,255,0.4)",                                                                                                                                           
-              }}  
-            >
-              Register                                                                                                                                                                    
-            </p>
-            <h1                                                                                                                                                                           
-              className="mt-1 text-[24px] leading-none text-white"
-              style={{
-                fontFamily: DISPLAY,                                                                                                                                                      
-                fontWeight: 400,
-                letterSpacing: "-0.01em",                                                                                                                                                 
-              }}  
-            >
-              Retailers                                                                                                                                                                   
-            </h1>
-          </div>                                                                                                                                                                          
-          <span   
-            className="text-[10px] uppercase tracking-[0.25em] tabular-nums"
-            style={{                                                                                                                                                                      
-              fontFamily: MONO,
-              color: "rgba(255,255,255,0.4)",                                                                                                                                             
-            }}    
-          >
-            {String(retailers.length).padStart(2, "0")} entries
-          </span>                                                                                                                                                                         
-        </header>
-                                                                                                                                                                                          
-        {/* Search */}
-        {retailers.length > 0 && (
-          <div className="relative">                                                                                                                                                      
-            <SearchIcon
-              className="pointer-events-none absolute left-0 top-1/2 size-3.5 -translate-y-1/2"                                                                                           
-              style={{ color: "rgba(255,255,255,0.35)" }}                                                                                                                                 
-            />                                                                                                                                                                            
-            <input                                                                                                                                                                        
-              type="search"                                                                                                                                                               
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name, parent, GST/PAN, phone…"
-              className="w-full bg-transparent py-2.5 pl-7 pr-12 text-base text-white outline-none placeholder:text-white/25 sm:text-sm"                                                  
-              style={{                                                                                                                                                                    
-                borderBottom: "1px solid rgba(255,255,255,0.12)",                                                                                                                         
-              }}                                                                                                                                                                          
-            />    
-            {query && (                                                                                                                                                                   
-              <button
-                type="button"
-                onClick={() => setQuery("")}
-                className="absolute right-0 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] uppercase tracking-[0.2em]"                                                                    
-                style={{                                                                                                                                                                  
-                  fontFamily: MONO,                                                                                                                                                       
-                  color: "rgba(255,255,255,0.45)",                                                                                                                                        
-                }}
-                aria-label="Clear"
-              >                                                                                                                                                                           
-                Clear
-              </button>                                                                                                                                                                   
-            )}    
-          </div>
-        )}
+const INDIGO = "#818cf8";
+const VIOLET = "#a78bfa";
+const EMERALD = "#34d399";
 
-        {/* Search summary */}
-        {query && (
-          <div className="flex items-baseline justify-between">                                                                                                                           
-            <span
-              className="text-[10px] uppercase tracking-[0.25em]"                                                                                                                         
-              style={{                                                                                                                                                                    
-                fontFamily: MONO,
-                color: "rgba(255,255,255,0.4)",                                                                                                                                           
-              }}  
-            >
-              Match
-            </span>                                                                                                                                                                       
-            <span
-              className="text-[10px] uppercase tracking-[0.25em] tabular-nums"                                                                                                            
-              style={{ fontFamily: MONO, color: AMBER }}
-            >                                                                                                                                                                             
-              {filtered.length} / {retailers.length}
-            </span>                                                                                                                                                                       
-          </div>  
-        )}
+function formatCompact(n: number) {
+  if (n >= 10000000) return `₹${(n / 10000000).toFixed(1)}Cr`;
+  if (n >= 100000) return `₹${(n / 100000).toFixed(1)}L`;
+  if (n >= 1000) return `₹${(n / 1000).toFixed(1)}K`;
+  return `₹${n}`;
+}
 
-        {/* Empty register */}                                                                                                                                                            
-        {retailers.length === 0 ? (
-          <div                                                                                                                                                                            
-            className="px-6 py-12 text-center"
-            style={{ border: "1px dashed rgba(255,255,255,0.12)" }}                                                                                                                       
-          >
-            <p                                                                                                                                                                            
-              className="text-[10px] uppercase tracking-[0.3em]"
-              style={{ fontFamily: MONO, color: AMBER }}                                                                                                                                  
-            >
-              ∎ Empty register                                                                                                                                                            
-            </p>                                                                                                                                                                          
-            <p
-              className="mt-3 text-[20px] leading-tight text-white"                                                                                                                       
-              style={{ fontFamily: DISPLAY, fontWeight: 400 }}                                                                                                                            
-            >
-              No retailers yet.                                                                                                                                                           
-            </p>                                                                                                                                                                          
-            <p
-              className="mt-2 text-[10px] uppercase tracking-[0.2em]"                                                                                                                     
-              style={{
-                fontFamily: MONO,
-                color: "rgba(255,255,255,0.4)",                                                                                                                                           
-              }}
-            >                                                                                                                                                                             
-              {hasCompanies
-                ? "Register your first retailer to begin."
-                : "Add a company first, then a retailer."}                                                                                                                                
-            </p>                                                                                                                                                                          
-            {hasCompanies && (                                                                                                                                                            
-              <Link                                                                                                                                                                       
-                href="/invoice/retailers/new?returnTo=%2Finvoice%2Fretailers"
-                className="mt-6 inline-flex items-center gap-2 px-4 py-3 transition active:scale-[0.97]"                                                                                  
-                style={{
-                  background: AMBER,                                                                                                                                                      
-                  color: "#0a0a0d",                                                                                                                                                       
-                  fontFamily: MONO,
-                }}                                                                                                                                                                        
-              >   
-                <span className="text-[10px] font-bold uppercase tracking-[0.25em]">
-                  Add retailer                                                                                                                                                            
-                </span>
-                <span className="text-[12px]">→</span>                                                                                                                                    
-              </Link>
-            )}
-          </div>
-        ) : filtered.length === 0 ? (
-          /* No match */                                                                                                                                                                  
-          <div
-            className="px-4 py-8 text-center"                                                                                                                                             
-            style={{
-              borderTop: "1px solid rgba(255,255,255,0.08)",                                                                                                                              
-            }}
-          >                                                                                                                                                                               
-            <p    
-              className="text-[10px] uppercase tracking-[0.25em]"
-              style={{                                                                                                                                                                    
-                fontFamily: MONO,
-                color: "rgba(255,255,255,0.4)",                                                                                                                                           
-              }}  
-            >
-              No match for &ldquo;{query}&rdquo;
-            </p>                                                                                                                                                                          
-          </div>
-        ) : (                                                                                                                                                                             
-          <>      
-            {/* Subtotal */}                                                                                                                                                              
-            <div
-              className="flex items-baseline justify-between gap-4 py-2"                                                                                                                  
-              style={{                                                                                                                                                                    
-                borderTop: "1px solid rgba(255,255,255,0.08)",
-                borderBottom: "1px solid rgba(255,255,255,0.08)",                                                                                                                         
-              }}                                                                                                                                                                          
-            >
-              <div className="flex items-baseline gap-4">                                                                                                                                 
-                <span
-                  className="text-[9px] uppercase tracking-[0.25em]"
-                  style={{                                                                                                                                                                
-                    fontFamily: MONO,
-                    color: "rgba(255,255,255,0.35)",                                                                                                                                      
-                  }}                                                                                                                                                                      
-                >
-                  Subtotal                                                                                                                                                                
-                </span>
-                <span
-                  className="text-[10px] uppercase tracking-[0.2em] tabular-nums"
-                  style={{                                                                                                                                                                
-                    fontFamily: MONO,
-                    color: "rgba(255,255,255,0.55)",                                                                                                                                      
-                  }}
-                >
-                  {totalBillsAll} bills
-                </span>                                                                                                                                                                   
-              </div>
-              <span                                                                                                                                                                       
-                className="text-[13px] tabular-nums"
-                style={{ fontFamily: MONO, color: AMBER }}
-              >                                                                                                                                                                           
-                {inr.format(totalBilledAll)}
-              </span>                                                                                                                                                                     
-            </div>
+export function RetailersClient({
+  retailers,
+  hasCompanies,
+}: {
+  retailers: EnrichedRetailer[];
+  hasCompanies: boolean;
+}) {
+  const [query, setQuery] = useState("");
 
-            {/* Grid */}                                                                                                                                                                  
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {filtered.map((r) => (                                                                                                                                                      
-                <RetailerCard                                                                                                                                                             
-                  key={r.id}
-                  id={r.id}                                                                                                                                                               
-                  name={r.name}
-                  companyName={r.companyName}
-                  taxIdType={r.taxIdType}
-                  invoiceCount={r.invoiceCount}                                                                                                                                           
-                  totalBilled={r.totalBilled}
-                />                                                                                                                                                                        
-              ))} 
-            </div>
-
-            {/* End stamp */}                                                                                                                                                             
-            <p
-              className="pt-2 text-center text-[9px] uppercase tracking-[0.3em]"                                                                                                          
-              style={{
-                fontFamily: MONO,                                                                                                                                                         
-                color: "rgba(255,255,255,0.22)",
-              }}                                                                                                                                                                          
-            >     
-              end of register · {filtered.length} of {retailers.length}
-            </p>                                                                                                                                                                          
-          </>
-        )}                                                                                                                                                                                
-                  
-        {/* Mobile FAB */}
-        {hasCompanies && (
-          <Link
-            href="/invoice/retailers/new?returnTo=%2Finvoice%2Fretailers"
-            className="fixed bottom-24 right-4 z-40 flex items-center gap-2 px-4 py-3 transition active:scale-[0.97] lg:hidden"                                                           
-            style={{                                                                                                                                                                      
-              background: AMBER,                                                                                                                                                          
-              color: "#0a0a0d",                                                                                                                                                           
-              fontFamily: MONO,
-              boxShadow:                                                                                                                                                                  
-                "0 14px 36px -12px rgba(245,158,11,0.55), inset 0 1px 0 rgba(255,255,255,0.3)",
-            }}                                                                                                                                                                            
-            aria-label="Add retailer"
-          >                                                                                                                                                                               
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em]">
-              New entry
-            </span>
-            <span className="text-[12px]">→</span>                                                                                                                                        
-          </Link>
-        )}                                                                                                                                                                                
-                  
-        {/* Desktop add */}
-        {hasCompanies && (
-          <Link
-            href="/invoice/retailers/new?returnTo=%2Finvoice%2Fretailers"                                                                                                                 
-            className="fixed bottom-6 right-6 z-40 hidden items-center gap-2 px-4 py-3 transition active:scale-[0.97] lg:inline-flex"
-            style={{                                                                                                                                                                      
-              background: AMBER,
-              color: "#0a0a0d",                                                                                                                                                           
-              fontFamily: MONO,                                                                                                                                                           
-            }}
-          >                                                                                                                                                                               
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em]">
-              New entry
-            </span>                                                                                                                                                                       
-            <span className="text-[12px]">→</span>
-          </Link>                                                                                                                                                                         
-        )}        
-      </div>
-    );
-  }
-
-  function SearchIcon({                                                                                                                                                                   
-    className,
-    style,                                                                                                                                                                                
-  }: {            
-    className?: string;
-    style?: React.CSSProperties;
-  }) {
+  const filtered = retailers.filter((r) => {
+    const q = query.toLowerCase().trim();
+    if (!q) return true;
     return (
-      <svg
-        className={className}
-        style={style}
-        viewBox="0 0 24 24"                                                                                                                                                               
-        fill="none"
-        stroke="currentColor"                                                                                                                                                             
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"                                                                                                                                                            
-        aria-hidden
-      >                                                                                                                                                                                   
-        <circle cx="11" cy="11" r="8" />
-        <path d="m21 21-4.35-4.35" />                                                                                                                                                     
-      </svg>
-    );                                                                                                                                                                                    
-  }
+      r.name.toLowerCase().includes(q) ||
+      (r.companyName ?? "").toLowerCase().includes(q) ||
+      r.taxId.toLowerCase().includes(q) ||
+      r.phone.includes(q)
+    );
+  });
+
+  const totalBills = filtered.reduce((s, r) => s + r.invoiceCount, 0);
+  const totalBilled = filtered.reduce((s, r) => s + r.totalBilled, 0);
+
+  return (
+    <div className="mx-auto max-w-md space-y-4 px-1 pb-24 lg:max-w-3xl lg:pb-6">
+      {/* Header */}
+      <header className="flex items-end justify-between gap-3">
+        <div>
+          <p className="text-[11px] text-white/40">Workspace</p>
+          <h1 className="mt-0.5 flex items-center gap-2 text-xl font-bold leading-tight text-white">
+            Retailers
+            <Store className="size-4" style={{ color: EMERALD }} />
+          </h1>
+        </div>
+        <span
+          className="rounded-full px-2.5 py-1 text-[10px] font-bold tabular-nums"
+          style={{
+            background: `${INDIGO}1f`,
+            color: INDIGO,
+            border: `1px solid ${INDIGO}33`,
+          }}
+        >
+          {retailers.length}
+        </span>
+      </header>
+
+      {/* Search */}
+      {retailers.length > 0 && (
+        <div
+          className="relative flex items-center gap-2 rounded-xl px-3 py-2.5"
+          style={{
+            background: "rgba(255,255,255,0.04)",
+            border: "1px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          <Search className="size-3.5 shrink-0 text-white/35" />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search name, company, GST, phone…"
+            className="min-w-0 flex-1 bg-transparent text-[13px] text-white outline-none placeholder:text-white/30"
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              className="shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold text-white/55 transition hover:bg-white/5"
+            >
+              clear
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Subtotal */}
+      {retailers.length > 0 && filtered.length > 0 && (
+        <div
+          className="flex items-center justify-between gap-2 rounded-xl px-3 py-2"
+          style={{
+            background: `linear-gradient(135deg, ${INDIGO}14, ${VIOLET}0a)`,
+            border: "1px solid rgba(255,255,255,0.06)",
+          }}
+        >
+          <div className="flex items-center gap-2.5 text-[11px]">
+            <span className="text-white/55">
+              {query ? "Match" : "Total"}
+            </span>
+            <span
+              className="font-bold tabular-nums"
+              style={{ color: INDIGO }}
+            >
+              {filtered.length}
+              {query && ` / ${retailers.length}`}
+            </span>
+            <span className="text-white/30">·</span>
+            <span className="text-white/55">
+              <span className="font-bold tabular-nums text-white/85">
+                {totalBills}
+              </span>{" "}
+              bills
+            </span>
+          </div>
+          <span
+            className="text-[12px] font-bold tabular-nums"
+            style={{ color: EMERALD }}
+          >
+            {formatCompact(totalBilled)}
+          </span>
+        </div>
+      )}
+
+      {retailers.length === 0 ? (
+        <EmptyState hasCompanies={hasCompanies} />
+      ) : filtered.length === 0 ? (
+        <NoMatch query={query} />
+      ) : (
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((r) => (
+            <RetailerCard
+              key={r.id}
+              id={r.id}
+              name={r.name}
+              companyName={r.companyName}
+              taxIdType={r.taxIdType}
+              invoiceCount={r.invoiceCount}
+              totalBilled={r.totalBilled}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* FAB */}
+      {hasCompanies && (
+        <Link
+          href="/invoice/retailers/new?returnTo=%2Finvoice%2Fretailers"
+          className="fixed bottom-24 right-4 z-40 flex items-center gap-2 rounded-full px-4 py-3 text-[12px] font-bold text-white shadow-xl transition active:scale-[0.95] lg:bottom-6 lg:right-6"
+          style={{
+            background: `linear-gradient(135deg, ${INDIGO}, ${VIOLET})`,
+            boxShadow: `0 8px 24px ${INDIGO}55`,
+          }}
+        >
+          <Plus className="size-3.5" />
+          <span>New retailer</span>
+        </Link>
+      )}
+    </div>
+  );
+}
+
+function EmptyState({ hasCompanies }: { hasCompanies: boolean }) {
+  return (
+    <div
+      className="rounded-2xl px-5 py-10 text-center"
+      style={{
+        background: `linear-gradient(180deg, ${INDIGO}10, transparent)`,
+        border: "1px dashed rgba(255,255,255,0.1)",
+      }}
+    >
+      <div
+        className="mx-auto flex size-12 items-center justify-center rounded-2xl"
+        style={{
+          background: `linear-gradient(135deg, ${INDIGO}30, ${VIOLET}20)`,
+        }}
+      >
+        <Store className="size-6" style={{ color: INDIGO }} />
+      </div>
+      <p className="mt-3 text-sm font-bold text-white">
+        No retailers yet
+      </p>
+      <p className="mt-1 text-[11px] text-white/45">
+        {hasCompanies
+          ? "Add your first retailer to get started."
+          : "Add a company first, then a retailer."}
+      </p>
+      {hasCompanies && (
+        <Link
+          href="/invoice/retailers/new?returnTo=%2Finvoice%2Fretailers"
+          className="mt-4 inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-[11px] font-bold text-white transition active:scale-[0.97]"
+          style={{
+            background: `linear-gradient(135deg, ${INDIGO}, ${VIOLET})`,
+            boxShadow: `0 4px 14px ${INDIGO}40`,
+          }}
+        >
+          <Plus className="size-3" /> Add retailer
+        </Link>
+      )}
+    </div>
+  );
+}
+
+function NoMatch({ query }: { query: string }) {
+  return (
+    <div
+      className="rounded-xl px-4 py-6 text-center"
+      style={{
+        background: "rgba(255,255,255,0.02)",
+        border: "1px solid rgba(255,255,255,0.06)",
+      }}
+    >
+      <Search className="mx-auto size-5 text-white/35" />
+      <p className="mt-2 text-[11px] text-white/45">
+        No results for &ldquo;
+        <span className="text-white/75">{query}</span>&rdquo;
+      </p>
+    </div>
+  );
+}

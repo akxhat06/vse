@@ -1,423 +1,304 @@
 "use client";
-                                                                                                                                                                                          
+
+import { Building2, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { DeleteEntityButton } from "@/app/(main)/invoice/_components/DeleteEntityButton";                                                                                               
-import { deleteCompany } from "@/app/(main)/invoice/store-actions";                                                                                                                     
-import type { CompanyWithStats } from "../page";                                                                                                                                        
-                                                                                                                                                                                        
-const AMBER = "rgb(245,158,11)";                                                                                                                                                        
-const MONO = "var(--font-mono)";                                                                                                                                                        
-const DISPLAY = "var(--font-display)";                                                                                                                                                  
-                                                                                                                                                                                        
-function formatInr(n: number) {
-  return new Intl.NumberFormat("en-IN", {                                                                                                                                               
-    style: "currency",
-    currency: "INR",
-    minimumFractionDigits: 0,                                                                                                                                                           
-    maximumFractionDigits: 0,
-  }).format(n);                                                                                                                                                                         
-}               
+import { DeleteEntityButton } from "@/app/(main)/invoice/_components/DeleteEntityButton";
+import { deleteCompany } from "@/app/(main)/invoice/store-actions";
+import type { CompanyWithStats } from "../page";
 
-export function CompaniesClient({                                                                                                                                                       
+const SKY = "#38bdf8";
+const INDIGO = "#818cf8";
+const EMERALD = "#34d399";
+
+const inr = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+});
+
+function formatCompact(n: number) {
+  if (n >= 10000000) return `₹${(n / 10000000).toFixed(1)}Cr`;
+  if (n >= 100000) return `₹${(n / 100000).toFixed(1)}L`;
+  if (n >= 1000) return `₹${(n / 1000).toFixed(1)}K`;
+  return `₹${n}`;
+}
+
+export function CompaniesClient({
   companies,
-}: {                                                                                                                                                                                    
+}: {
   companies: CompanyWithStats[];
 }) {
   const [query, setQuery] = useState("");
-                                                                                                                                                                                        
+
   const filtered = companies.filter((c) => {
-    const q = query.toLowerCase().trim();                                                                                                                                               
+    const q = query.toLowerCase().trim();
     if (!q) return true;
     return (
       c.name.toLowerCase().includes(q) ||
-      c.gstNumber.toLowerCase().includes(q) ||                                                                                                                                          
+      c.gstNumber.toLowerCase().includes(q) ||
       c.phone.includes(q) ||
-      (c.city ?? "").toLowerCase().includes(q) ||                                                                                                                                       
-      (c.state ?? "").toLowerCase().includes(q) ||                                                                                                                                      
+      (c.city ?? "").toLowerCase().includes(q) ||
+      (c.state ?? "").toLowerCase().includes(q) ||
       (c.email ?? "").toLowerCase().includes(q)
-    );                                                                                                                                                                                  
-  });           
-                                                                                                                                                                                        
-  const totalBilledAll = filtered.reduce(                                                                                                                                               
+    );
+  });
+
+  const totalBilledAll = filtered.reduce(
     (s, c) => s + (c.totalBilled ?? 0),
-    0,                                                                                                                                                                                  
-  );            
-  const totalBillsAll = filtered.reduce(
-    (s, c) => s + (c.invoiceCount ?? 0),                                                                                                                                                
     0,
-  );                                                                                                                                                                                    
-                
+  );
+  const totalBillsAll = filtered.reduce(
+    (s, c) => s + (c.invoiceCount ?? 0),
+    0,
+  );
+
   return (
-    <div className="space-y-6 pb-28 pt-1 lg:pb-6">
-      {/* ── Page heading ── */}                                                                                                                                                        
-      <header className="flex items-baseline justify-between gap-4">
-        <div>                                                                                                                                                                           
-          <p    
-            className="text-[10px] uppercase tracking-[0.3em]"                                                                                                                          
-            style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)" }}                                                                                                                
-          >
-            Register                                                                                                                                                                    
-          </p>                                                                                                                                                                          
-          <h1
-            className="mt-1 text-[24px] leading-none text-white"                                                                                                                        
-            style={{
-              fontFamily: DISPLAY,
-              fontWeight: 400,                                                                                                                                                          
-              letterSpacing: "-0.01em",
-            }}                                                                                                                                                                          
-          >     
+    <div className="mx-auto max-w-md space-y-4 px-1 pb-24 lg:max-w-3xl lg:pb-6">
+      {/* Header */}
+      <header className="flex items-end justify-between gap-3">
+        <div>
+          <p className="text-[11px] text-white/40">Workspace</p>
+          <h1 className="mt-0.5 flex items-center gap-2 text-xl font-bold leading-tight text-white">
             Companies
+            <Building2 className="size-4" style={{ color: SKY }} />
           </h1>
         </div>
-        <span                                                                                                                                                                           
-          className="text-[10px] uppercase tracking-[0.25em] tabular-nums"
-          style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)" }}                                                                                                                  
-        >                                                                                                                                                                               
-          {String(companies.length).padStart(2, "0")} entries
-        </span>                                                                                                                                                                         
-      </header> 
-                                                                                                                                                                                        
-      {/* ── Search ── */}
-      <div className="relative">
-        <SearchIcon
-          className="pointer-events-none absolute left-0 top-1/2 size-3.5 -translate-y-1/2"
-          style={{ color: "rgba(255,255,255,0.35)" }}                                                                                                                                   
-        />                                                                                                                                                                              
-        <input                                                                                                                                                                          
-          type="search"                                                                                                                                                                 
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by name, GST, city…"
-          className="w-full bg-transparent py-2.5 pl-7 pr-9 text-base text-white outline-none placeholder:text-white/25 sm:text-sm"                                                     
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}                                                                                                                  
-        />                                                                                                                                                                              
-        {query && (                                                                                                                                                                     
-          <button
-            type="button"                                                                                                                                                               
-            onClick={() => setQuery("")}
-            className="absolute right-0 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] uppercase tracking-[0.2em]"
-            style={{ fontFamily: MONO, color: "rgba(255,255,255,0.45)" }}                                                                                                               
-            aria-label="Clear"
-          >                                                                                                                                                                             
-            Clear
-          </button>                                                                                                                                                                     
-        )}      
-      </div>
-
-      {/* ── Search summary (only while filtering) ── */}                                                                                                                               
-      {query && (
-        <div                                                                                                                                                                            
-          className="flex items-baseline justify-between"
+        <span
+          className="rounded-full px-2.5 py-1 text-[10px] font-bold tabular-nums"
           style={{
-            paddingTop: "0.25rem",                                                                                                                                                      
+            background: `${SKY}1f`,
+            color: SKY,
+            border: `1px solid ${SKY}33`,
           }}
-        >                                                                                                                                                                               
-          <span 
-            className="text-[10px] uppercase tracking-[0.25em]"
-            style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)" }}                                                                                                                
-          >
-            Match                                                                                                                                                                       
-          </span>
-          <span
-            className="text-[10px] uppercase tracking-[0.25em] tabular-nums"                                                                                                            
-            style={{ fontFamily: MONO, color: AMBER }}
-          >                                                                                                                                                                             
-            {filtered.length} / {companies.length}
-          </span>                                                                                                                                                                       
-        </div>  
+        >
+          {companies.length}
+        </span>
+      </header>
+
+      {/* Search */}
+      {companies.length > 0 && (
+        <div
+          className="relative flex items-center gap-2 rounded-xl px-3 py-2.5"
+          style={{
+            background: "rgba(255,255,255,0.04)",
+            border: "1px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          <Search className="size-3.5 shrink-0 text-white/35" />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search name, GST, city…"
+            className="min-w-0 flex-1 bg-transparent text-[13px] text-white outline-none placeholder:text-white/30"
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              className="shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold text-white/55 transition hover:bg-white/5"
+            >
+              clear
+            </button>
+          )}
+        </div>
       )}
 
-      {/* ── Empty state (no companies at all) ── */}                                                                                                                                   
+      {/* Subtotal pill */}
+      {companies.length > 0 && filtered.length > 0 && (
+        <div
+          className="flex items-center justify-between gap-2 rounded-xl px-3 py-2"
+          style={{
+            background: `linear-gradient(135deg, ${SKY}14, ${INDIGO}0a)`,
+            border: "1px solid rgba(255,255,255,0.06)",
+          }}
+        >
+          <div className="flex items-center gap-2.5 text-[11px]">
+            <span className="text-white/55">
+              {query ? "Match" : "Total"}
+            </span>
+            <span
+              className="font-bold tabular-nums"
+              style={{ color: SKY }}
+            >
+              {filtered.length}
+              {query && ` / ${companies.length}`}
+            </span>
+            <span className="text-white/30">·</span>
+            <span className="text-white/55">
+              <span className="font-bold tabular-nums text-white/85">
+                {totalBillsAll}
+              </span>{" "}
+              bills
+            </span>
+          </div>
+          <span
+            className="text-[12px] font-bold tabular-nums"
+            style={{ color: EMERALD }}
+          >
+            {formatCompact(totalBilledAll)}
+          </span>
+        </div>
+      )}
+
+      {/* Empty / no-match / list */}
       {companies.length === 0 ? (
-        <EmptyStamp />                                                                                                                                                                  
-      ) : filtered.length === 0 ? (                                                                                                                                                     
+        <EmptyState />
+      ) : filtered.length === 0 ? (
         <NoMatch query={query} />
-      ) : (                                                                                                                                                                             
-        <>                                                                                                                                                                              
-          {/* ── Subtotal strip (mono) ── */}
-          <div                                                                                                                                                                          
-            className="flex items-baseline justify-between gap-4 py-2"
-            style={{                                                                                                                                                                    
-              borderTop: "1px solid rgba(255,255,255,0.08)",
-              borderBottom: "1px solid rgba(255,255,255,0.08)",                                                                                                                         
-            }}  
-          >                                                                                                                                                                             
-            <div className="flex items-baseline gap-4">                                                                                                                                 
+      ) : (
+        <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+          {filtered.map((c) => (
+            <CompanyRow key={c.id} c={c} />
+          ))}
+        </ul>
+      )}
+
+      {/* FAB */}
+      <Link
+        href="/invoice/companies/new?returnTo=%2Finvoice%2Fcompanies"
+        className="fixed bottom-24 right-4 z-40 flex items-center gap-2 rounded-full px-4 py-3 text-[12px] font-bold text-white shadow-xl transition active:scale-[0.95] lg:bottom-6 lg:right-6"
+        style={{
+          background: `linear-gradient(135deg, ${SKY}, ${INDIGO})`,
+          boxShadow: `0 8px 24px ${SKY}55`,
+        }}
+        aria-label="Add company"
+      >
+        <Plus className="size-3.5" />
+        <span>New company</span>
+      </Link>
+    </div>
+  );
+}
+
+function CompanyRow({ c }: { c: CompanyWithStats }) {
+  const initial = c.name.charAt(0).toUpperCase();
+  const hasInvoices = c.invoiceCount > 0;
+  const location = [c.city, c.state].filter(Boolean).join(", ");
+
+  return (
+    <li
+      className="relative overflow-hidden rounded-xl"
+      style={{
+        background: "rgba(255,255,255,0.03)",
+        border: "1px solid rgba(255,255,255,0.07)",
+      }}
+    >
+      <div className="flex items-center gap-2.5 p-2.5">
+        <Link
+          href={`/invoice/companies/${c.id}`}
+          className="flex min-w-0 flex-1 items-center gap-2.5 transition active:opacity-70"
+        >
+          <span
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg text-[13px] font-bold text-white"
+            style={{
+              background: `linear-gradient(135deg, ${SKY}, ${INDIGO})`,
+              boxShadow: `0 4px 10px ${SKY}30`,
+            }}
+          >
+            {initial}
+          </span>
+
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[13px] font-semibold leading-tight text-white">
+              {c.name}
+            </p>
+            <p className="mt-0.5 truncate text-[10px] text-white/40">
+              {c.gstNumber || "no gst"}
+              {location && ` · ${location}`}
+            </p>
+            <p className="mt-0.5 truncate text-[11px]">
               <span
-                className="text-[9px] uppercase tracking-[0.25em]"                                                                                                                      
-                style={{ fontFamily: MONO, color: "rgba(255,255,255,0.35)" }}                                                                                                           
+                className="font-bold tabular-nums"
+                style={{
+                  color: hasInvoices
+                    ? "rgba(255,255,255,0.85)"
+                    : "rgba(255,255,255,0.3)",
+                }}
               >
-                Subtotal                                                                                                                                                                
+                {c.invoiceCount}
+              </span>
+              <span className="text-white/40">
+                {" "}
+                bill{c.invoiceCount !== 1 ? "s" : ""}
+                {" · "}
               </span>
               <span
-                className="text-[10px] uppercase tracking-[0.2em] tabular-nums"
-                style={{ fontFamily: MONO, color: "rgba(255,255,255,0.55)" }}                                                                                                           
-              >                                                                                                                                                                         
-                {totalBillsAll} bills                                                                                                                                                   
-              </span>                                                                                                                                                                   
-            </div>
-            <span
-              className="text-[13px] tabular-nums"
-              style={{ fontFamily: MONO, color: AMBER }}                                                                                                                                
-            >
-              {formatInr(totalBilledAll)}                                                                                                                                               
-            </span>
-          </div>                                                                                                                                                                        
- 
-          {/* ── Register rows ── */}                                                                                                                                                   
-          <ul>  
-            {filtered.map((c, i) => (
-              <li                                                                                                                                                                       
-                key={c.id}
-                className="relative flex items-stretch"                                                                                                                                 
+                className="font-bold tabular-nums"
                 style={{
-                  borderBottom: "1px solid rgba(255,255,255,0.06)",
-                }}                                                                                                                                                                      
+                  color: hasInvoices ? EMERALD : "rgba(255,255,255,0.3)",
+                }}
               >
-                <Link                                                                                                                                                                   
-                  href={`/invoice/companies/${c.id}`}
-                  className="group flex flex-1 min-w-0 items-start gap-3 py-3 pr-2 transition-opacity active:opacity-70"                                                                
-                >                                                                                                                                                                       
-                  {/* Index */}                                                                                                                                                         
-                  <span                                                                                                                                                                 
-                    className="w-6 shrink-0 pt-0.5 text-[10px] tabular-nums"
-                    style={{                                                                                                                                                            
-                      fontFamily: MONO,                                                                                                                                                 
-                      color: "rgba(255,255,255,0.3)",
-                    }}                                                                                                                                                                  
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>                                                                                                                                                               
- 
-                  {/* Initial */}                                                                                                                                                       
-                  <span
-                    className="flex size-7 shrink-0 items-center justify-center text-[11px] font-medium"
-                    style={{                                                                                                                                                            
-                      fontFamily: MONO,
-                      color: AMBER,                                                                                                                                                     
-                      background: "rgba(245,158,11,0.08)",
-                      border: `1px solid ${AMBER}40`,                                                                                                                                   
-                    }}
-                  >                                                                                                                                                                     
-                    {c.name.charAt(0).toUpperCase()}
-                  </span>                                                                                                                                                               
-                
-                  {/* Name + meta */}
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[14px] leading-tight text-white">                                                                                                       
-                      {c.name}                                                                                                                                                          
-                    </p>                                                                                                                                                                
-                    <p                                                                                                                                                                  
-                      className="mt-1 truncate text-[10px] uppercase tracking-[0.15em]"
-                      style={{                                                                                                                                                          
-                        fontFamily: MONO,
-                        color: "rgba(255,255,255,0.4)",                                                                                                                                 
-                      }}
-                    >
-                      <span>{c.gstNumber || "no gst"}</span>                                                                                                                            
-                      {(c.city || c.state) && (
-                        <>                                                                                                                                                              
-                          {" · "}
-                          <span>                                                                                                                                                        
-                            {[c.city, c.state]
-                              .filter(Boolean)
-                              .join(", ")}                                                                                                                                              
-                          </span>
-                        </>                                                                                                                                                             
-                      )}
-                    </p>
-                  </div>
+                {hasInvoices ? inr.format(c.totalBilled) : "—"}
+              </span>
+            </p>
+          </div>
+        </Link>
 
-                  {/* Amount + bills */}                                                                                                                                                
-                  <div className="shrink-0 text-right">
-                    <p                                                                                                                                                                  
-                      className="text-[14px] tabular-nums leading-tight"
-                      style={{                                                                                                                                                          
-                        fontFamily: MONO,
-                        color:                                                                                                                                                          
-                          c.invoiceCount > 0
-                            ? AMBER
-                            : "rgba(255,255,255,0.3)",                                                                                                                                  
-                      }}
-                    >                                                                                                                                                                   
-                      {c.invoiceCount > 0
-                        ? formatInr(c.totalBilled)
-                        : "—"}                                                                                                                                                          
-                    </p>
-                    <p                                                                                                                                                                  
-                      className="mt-1 text-[9px] uppercase tracking-[0.2em] tabular-nums"
-                      style={{                                                                                                                                                          
-                        fontFamily: MONO,
-                        color: "rgba(255,255,255,0.4)",                                                                                                                                 
-                      }}
-                    >
-                      {c.invoiceCount} bill                                                                                                                                             
-                      {c.invoiceCount !== 1 ? "s" : ""}
-                    </p>                                                                                                                                                                
-                  </div>
-                </Link>
-                                                                                                                                                                                        
-                {/* Delete (separate from row link) */}
-                <div className="flex items-center pl-1 pr-1">                                                                                                                           
-                  <DeleteEntityButton                                                                                                                                                   
-                    id={c.id}
-                    onDelete={deleteCompany}                                                                                                                                            
-                    confirmMessage="Delete this company? Retailers and invoices must be removed first."
-                    iconOnly                                                                                                                                                            
-                  />                                                                                                                                                                    
-                </div>                                                                                                                                                                  
-              </li>                                                                                                                                                                     
-            ))} 
-          </ul>
-
-        </>                                                                                                                                                                             
-      )}        
-
-      {/* ── Mobile FAB ── */}                                                                                                                                                          
-      <Link
-        href="/invoice/companies/new?returnTo=%2Finvoice%2Fcompanies"                                                                                                                   
-        className="fixed bottom-24 right-4 z-40 flex items-center gap-2 px-4 py-3 transition active:scale-[0.97] lg:hidden"                                                             
-        style={{                                                                                                                                                                        
-          background: AMBER,                                                                                                                                                            
-          color: "#0a0a0d",                                                                                                                                                             
-          fontFamily: MONO,                                                                                                                                                             
-          boxShadow:
-            "0 14px 36px -12px rgba(245,158,11,0.55), inset 0 1px 0 rgba(255,255,255,0.3)",                                                                                             
-        }}                                                                                                                                                                              
-        aria-label="Add company"
-      >                                                                                                                                                                                 
-        <PlusIcon className="size-3.5" />
-        <span className="text-[10px] font-bold uppercase tracking-[0.25em]">
-          New entry                                                                                                                                                                     
-        </span>
-      </Link>                                                                                                                                                                           
-                                                                                                                                                                                        
-      {/* ── Desktop add button ── */}
-      <Link                                                                                                                                                                             
-        href="/invoice/companies/new?returnTo=%2Finvoice%2Fcompanies"
-        className="hidden lg:inline-flex fixed bottom-6 right-6 items-center gap-2 px-4 py-3 transition active:scale-[0.97]"
-        style={{                                                                                                                                                                        
-          background: AMBER,
-          color: "#0a0a0d",                                                                                                                                                             
-          fontFamily: MONO,
-        }}
-      >
-        <PlusIcon className="size-3.5" />                                                                                                                                               
-        <span className="text-[10px] font-bold uppercase tracking-[0.25em]">
-          New entry                                                                                                                                                                     
-        </span> 
-      </Link>
-    </div>                                                                                                                                                                              
+        <DeleteEntityButton
+          id={c.id}
+          onDelete={deleteCompany}
+          confirmMessage="Delete this company? Retailers and invoices must be removed first."
+          iconOnly
+        />
+      </div>
+    </li>
   );
-}                                                                                                                                                                                       
-                
-/* ── Empty states ── */
+}
 
-function EmptyStamp() {
+function EmptyState() {
   return (
     <div
-      className="relative px-6 py-12 text-center"                                                                                                                                       
+      className="rounded-2xl px-5 py-10 text-center"
       style={{
-        border: "1px dashed rgba(255,255,255,0.12)",                                                                                                                                    
-      }}                                                                                                                                                                                
+        background: `linear-gradient(180deg, ${SKY}10, transparent)`,
+        border: "1px dashed rgba(255,255,255,0.1)",
+      }}
     >
-      <p                                                                                                                                                                                
-        className="text-[10px] uppercase tracking-[0.3em]"
-        style={{ fontFamily: MONO, color: AMBER }}
-      >                                                                                                                                                                                 
-        ∎ Empty register
-      </p>                                                                                                                                                                              
-      <p        
-        className="mt-3 text-[20px] leading-tight text-white"                                                                                                                           
+      <div
+        className="mx-auto flex size-12 items-center justify-center rounded-2xl"
         style={{
-          fontFamily: DISPLAY,                                                                                                                                                          
-          fontWeight: 400,
-        }}                                                                                                                                                                              
+          background: `linear-gradient(135deg, ${SKY}30, ${INDIGO}20)`,
+        }}
       >
-        No entries yet.                                                                                                                                                                 
-      </p>      
-      <p
-        className="mt-2 text-[10px] uppercase tracking-[0.2em]"
-        style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)" }}                                                                                                                    
-      >
-        Add your first company to begin.                                                                                                                                                
-      </p>      
-      <Link                                                                                                                                                                             
+        <Building2 className="size-6" style={{ color: SKY }} />
+      </div>
+      <p className="mt-3 text-sm font-bold text-white">
+        No companies yet
+      </p>
+      <p className="mt-1 text-[11px] text-white/45">
+        Add your first company to begin.
+      </p>
+      <Link
         href="/invoice/companies/new?returnTo=%2Finvoice%2Fcompanies"
-        className="mt-6 inline-flex items-center gap-2 px-4 py-2.5 transition active:scale-[0.97]"                                                                                      
+        className="mt-4 inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-[11px] font-bold text-white transition active:scale-[0.97]"
         style={{
-          background: AMBER,                                                                                                                                                            
-          color: "#0a0a0d",
-          fontFamily: MONO,                                                                                                                                                             
-        }}      
+          background: `linear-gradient(135deg, ${SKY}, ${INDIGO})`,
+          boxShadow: `0 4px 14px ${SKY}40`,
+        }}
       >
-        <PlusIcon className="size-3.5" />
-        <span className="text-[10px] font-bold uppercase tracking-[0.25em]">
-          Open account                                                                                                                                                                  
-        </span>
-      </Link>                                                                                                                                                                           
-    </div>      
-  );
-}
-
-function NoMatch({ query }: { query: string }) {                                                                                                                                        
-  return (
-    <div                                                                                                                                                                                
-      className="px-4 py-8 text-center"
-      style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
-    >                                                                                                                                                                                   
-      <p
-        className="text-[10px] uppercase tracking-[0.25em]"                                                                                                                             
-        style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)" }}                                                                                                                    
-      >
-        No match for &ldquo;{query}&rdquo;                                                                                                                                              
-      </p>                                                                                                                                                                              
+        <Plus className="size-3" /> Add company
+      </Link>
     </div>
-  );                                                                                                                                                                                    
-}               
-
-/* ── Icons ── */
-
-function SearchIcon({
-  className,
-  style,
-}: {
-  className?: string;                                                                                                                                                                   
-  style?: React.CSSProperties;
-}) {                                                                                                                                                                                    
-  return (      
-    <svg
-      className={className}
-      style={style}
-      viewBox="0 0 24 24"
-      fill="none"                                                                                                                                                                       
-      stroke="currentColor"
-      strokeWidth="1.8"                                                                                                                                                                 
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden                                                                                                                                                                       
-    >
-      <circle cx="11" cy="11" r="8" />                                                                                                                                                  
-      <path d="m21 21-4.35-4.35" />
-    </svg>
-  );                                                                                                                                                                                    
-}
-                                                                                                                                                                                        
-function PlusIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"                                                                                                                                                                       
-      stroke="currentColor"
-      strokeWidth="2.5"                                                                                                                                                                 
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden                                                                                                                                                                       
-    >
-      <line x1="12" y1="5" x2="12" y2="19" />                                                                                                                                           
-      <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>                                                                                                                                                                              
   );
-}              
+}
+
+function NoMatch({ query }: { query: string }) {
+  return (
+    <div
+      className="rounded-xl px-4 py-6 text-center"
+      style={{
+        background: "rgba(255,255,255,0.02)",
+        border: "1px solid rgba(255,255,255,0.06)",
+      }}
+    >
+      <Search className="mx-auto size-5 text-white/35" />
+      <p className="mt-2 text-[11px] text-white/45">
+        No results for &ldquo;
+        <span className="text-white/75">{query}</span>&rdquo;
+      </p>
+    </div>
+  );
+}
